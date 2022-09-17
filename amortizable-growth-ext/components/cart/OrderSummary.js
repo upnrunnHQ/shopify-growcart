@@ -5,7 +5,7 @@ import { Text, Money } from 'components';
 export function OrderSummary() {
     const { cart } = useCart();
     const { items_subtotal_price, currency } = cart;
-    const totalSaving = cart.total_discount ? <Money data={{ amount: String(items_subtotal_price), currencyCode: currency }} /> : null;
+    const totalSaving = cart.total_discount ? <Money data={{ amount: String(cart.total_discount), currencyCode: currency }} /> : null;
 
     return (
         <>
