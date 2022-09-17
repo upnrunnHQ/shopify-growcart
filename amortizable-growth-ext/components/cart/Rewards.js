@@ -58,11 +58,9 @@ export function Rewards() {
     if (gettingMostRewards) {
         hint = 'You\'re getting the most rewards!';
     } else if (nextRewards.length) {
-        console.log(nextRewards);
-        console.log(nextRewards[0].hint);
         hint = nextRewards[0].hint;
-        hint.replace('{{quantity}}', nextRewards[0].quantity - cart.item_count);
-        hint.replace('{{name}}', nextRewards[0].name);
+        hint = hint.replace('{{quantity}}', nextRewards[0].quantity - cart.item_count);
+        hint = hint.replace('{{name}}', nextRewards[0].name);
     }
 
     useEffect(() => {
