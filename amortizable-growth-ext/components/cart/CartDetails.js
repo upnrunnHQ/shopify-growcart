@@ -28,7 +28,7 @@ export function CartDetails() {
                 className="CartDetails__cart-contents"
             >
                 <Rewards />
-                <ul className="CartLines">
+                <ul className="CartLines CartDetails__CartLines">
                     {cart.items.map((line) => {
                         return (
                             <CartLineProvider key={line.id} line={line}>

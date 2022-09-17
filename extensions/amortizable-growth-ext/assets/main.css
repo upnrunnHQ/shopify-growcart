@@ -610,15 +610,14 @@ div.offcanvas-backdrop {
   flex-direction: column;
   justify-content: space-between;
   height: 100%; }
-  .CartDetails__cart-contents, .CartDetails__summary {
+  .CartDetails__Rewards, .CartDetails__CartLines, .CartDetails__summary {
     padding: 24px 32px; }
   .CartDetails__summary {
     background-color: #e9ecef; }
 
 .CartLines {
   list-style: none;
-  margin: 0;
-  padding: 0; }
+  margin: 0; }
 
 .CartLineItem {
   display: flex;

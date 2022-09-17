@@ -96,12 +96,12 @@ export function Rewards() {
     }, [cart]);
 
     return (
-        <div className="Rewards">
+        <div className="Rewards CartDetails__Rewards">
             <div className="Rewards__list">
                 <span className="Rewards__list-title">Rewards</span>
                 {currentRewards.length || nextRewards.length ? (
                     <ul>
-                        {currentRewards.length && currentRewards.map((reward, index) => (
+                        {!!currentRewards.length && currentRewards.map((reward, index) => (
                             <li key={index} className="Rewards__item availed">
                                 <span className="Rewards__icon">
                                     <IconStar />
@@ -113,7 +113,7 @@ export function Rewards() {
                             </li>
                         ))}
 
-                        {nextRewards.length && nextRewards.map((reward, index) => (
+                        {!!nextRewards.length && nextRewards.map((reward, index) => (
                             <li key={index} className="Rewards__item">
                                 <span className="Rewards__icon">
                                     <IconLock />
