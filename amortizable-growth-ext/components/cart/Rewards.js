@@ -33,7 +33,7 @@ export function Rewards() {
                 enabled: true,
             },
             {
-                id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
+                id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
                 name: '20% Off',
                 type: 'percent',
                 value: 20,
