@@ -92,6 +92,24 @@ export async function createServer(
     }
   });
 
+  app.get("/api/reward", async (req, res) => {
+    res.status(200).send({
+      name: 'Cart threshold incentives (by quantity)',
+      type: 'minimum_cart_quantity',
+      rules: [
+        {
+          id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
+          name: '10% Off',
+          type: 'percent',
+          value: 10,
+          quantity: 2,
+          hint: '**Add** {{quantity}} more to get {{name}}',
+          enabled: true,
+        }
+      ]
+    });
+  });
+
   // All endpoints after this point will require an active session
   app.use(
     "/api/*",

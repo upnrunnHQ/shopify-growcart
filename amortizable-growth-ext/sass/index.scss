@@ -1,0 +1,149 @@
+// Required
+@import "~bootstrap/scss/functions";
+
+// Default variable overrides
+@import "variables";
+
+// Configuration
+@import "~bootstrap/scss/variables";
+@import "~bootstrap/scss/maps";
+@import "~bootstrap/scss/mixins";
+@import "~bootstrap/scss/utilities";
+
+// Components
+@import "~bootstrap/scss/close";
+@import "~bootstrap/scss/offcanvas";
+
+@import "elements";
+@import "growcarthq-toggler";
+@import "rewards";
+
+.offcanvas {
+    --bs-offcanvas-padding-x: 32px;
+    --bs-offcanvas-padding-y: 24px;
+}
+
+.offcanvas-header {
+    background-color: $gray-200;
+}
+
+.offcanvas-body {
+    padding: 0;
+}
+
+div.offcanvas-backdrop {
+    display: block;
+}
+
+.CartDetails {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+
+    &__cart-contents,
+    &__summary {
+        padding: 24px 32px;
+    }
+
+    &__summary {
+        background-color: $gray-200;
+    }
+}
+
+.CartLines {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.CartLineItem {
+    display: flex;
+    gap: 1rem;
+
+    &__image {
+        flex-shrink: 1;
+
+        img {
+            object-fit: cover;
+            object-position: center;
+            border-width: 1px;
+            border-radius: .25rem;
+            width: 7rem;
+            height: 7rem;
+        }
+    }
+
+    &__content {
+        display: flex;
+        justify-content: space-between;
+        flex-grow: 1;
+    }
+
+    &__selected-options {
+        display: grid;
+    }
+
+    &__quantity {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    &__quantity-adjust {
+        display: flex;
+        align-items: center;
+        border: 1px solid #e5e7eb;
+        border-radius: .25rem;
+
+        button {
+            width: 2.5rem;
+            height: 2.5rem;
+            border: none;
+            background-color: transparent;
+        }
+    }
+
+    &__remove {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        width: 2.5rem;
+        height: 2.5rem;
+        border: 1px solid #e5e7eb;
+        border-radius: .25rem;
+        background-color: transparent;
+
+        svg {
+            width: 1.25rem;
+            height: 1.25rem;
+        }
+    }
+}
+
+.CartEmpty {
+    padding: 24px 32px;
+}
+
+.OrderSummary {
+    display: grid;
+    margin: 0;
+    padding-bottom: 16px;
+
+    &__item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+}
+
+.CartCheckoutActions {
+    display: grid;
+
+    &__button {
+        padding: 0.75rem 1.5rem;
+        text-align: center;
+        background-color: rgb(20, 20, 20);
+        color: $white;
+    }
+}
