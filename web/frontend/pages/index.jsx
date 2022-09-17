@@ -21,7 +21,7 @@ export default function HomePage() {
   */
   const isLoading = false;
   const isRefetching = false;
-  const QRCodes = [
+  const rewards = [
     {
       createdAt: "2022-06-13",
       destination: "checkout",
@@ -32,31 +32,12 @@ export default function HomePage() {
         title: "Faded t-shirt",
       }
     },
-    {
-      createdAt: "2022-06-13",
-      destination: "product",
-      title: "My second QR code",
-      id: 2,
-      discountCode: "WINTERDISCOUNT",
-      product: {
-        title: "Cozy parka",
-      }
-    },
-    {
-      createdAt: "2022-06-13",
-      destination: "product",
-      title: "QR code for deleted product",
-      id: 3,
-      product: {
-        title: "Deleted product",
-      }
-    },
   ];
-  
+
 
   /* Set the QR codes to use in the list */
-  const qrCodesMarkup = QRCodes?.length ? (
-    <RewardsIndex QRCodes={QRCodes} loading={isRefetching} />
+  const rewardsMarkup = rewards?.length ? (
+    <RewardsIndex rewards={rewards} loading={isRefetching} />
   ) : null;
 
   /* loadingMarkup uses the loading component from AppBridge and components from Polaris  */
@@ -69,7 +50,7 @@ export default function HomePage() {
 
   /* Use Polaris Card and EmptyState components to define the contents of the empty state */
   const emptyStateMarkup =
-    !isLoading && !QRCodes?.length ? (
+    !isLoading && !rewards?.length ? (
       <Card sectioned>
         <EmptyState
           heading="Create unique reward rules for your shop!"
@@ -102,7 +83,7 @@ export default function HomePage() {
       <Layout>
         <Layout.Section>
           {loadingMarkup}
-          {qrCodesMarkup}
+          {rewardsMarkup}
           {emptyStateMarkup}
         </Layout.Section>
       </Layout>
