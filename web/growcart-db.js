@@ -1,9 +1,7 @@
 import sqlite3 from "sqlite3";
 import path from "path";
-import { Shopify } from "@shopify/shopify-api";
 
 const DEFAULT_DB_FILE = path.join(process.cwd(), "growcart.sqlite");
-const DEFAULT_PURCHASE_QUANTITY = 1;
 
 export const GrowCartDB = {
     cartSettingsTableName: "cart_settings",
