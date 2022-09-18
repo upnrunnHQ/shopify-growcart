@@ -24,7 +24,7 @@ export default function HomePage() {
   ];
 
   return (
-    <Page>
+    <Page narrowWidth>
       <TitleBar title="GrowCart Settings" primaryAction={null} />
       <Layout>
         <Layout.Section>
