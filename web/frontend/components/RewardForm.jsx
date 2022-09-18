@@ -6,6 +6,7 @@ import {
     ChoiceList,
     Stack,
     Layout,
+    TextField
 } from "@shopify/polaris";
 import {
     ContextualSaveBar,
@@ -94,25 +95,30 @@ export function RewardForm() {
                             visible={dirty}
                             fullWidth
                         />
-                        <FormLayout>
-                            <Card>
-                                <Card.Section title="Minimum requirement type">
-                                    <ChoiceList
-                                        title="Minimum requirement type"
-                                        titleHidden
-                                        choices={[
-                                            { label: 'Minimum purchase amount', value: RequirementType.Subtotal },
-                                            { label: 'Minimum quantity of items', value: RequirementType.Quantity },
-                                        ]}
-                                        selected={minimumRequiremenType.value}
-                                        onChange={minimumRequiremenType.onChange}
-                                    />
-                                </Card.Section>
+                        <Card title="Minimum requirement type" sectioned>
+                            <ChoiceList
+                                title="Minimum requirement type"
+                                titleHidden
+                                choices={[
+                                    { label: 'Minimum purchase amount', value: RequirementType.Subtotal },
+                                    { label: 'Minimum quantity of items', value: RequirementType.Quantity },
+                                ]}
+                                selected={minimumRequiremenType.value}
+                                onChange={minimumRequiremenType.onChange}
+                            />
+                        </Card>
 
-                                <Card.Section title="Discount type">
+                        <Card>
+                            <Card.Section title="Discount type">
+                                <FormLayout>
+                                    <TextField
+                                        label="Name"
+                                        value={"{{value}} % Off"}
+                                        onChange={() => { }}
+                                        autoComplete="off"
+                                    />
                                     <ChoiceList
                                         title="Discount type"
-                                        titleHidden
                                         choices={[
                                             { label: 'Percentage', value: 'percentage' },
                                             { label: 'Fixed amount', value: 'fixed' },
@@ -120,9 +126,24 @@ export function RewardForm() {
                                         selected={discountType.value}
                                         onChange={discountType.onChange}
                                     />
-                                </Card.Section>
-                            </Card>
-                        </FormLayout>
+                                    <TextField
+                                        label="Minimum cart quantity"
+                                        type="number"
+                                        value={""}
+                                        onChange={() => { }}
+                                        autoComplete="off"
+                                    />
+                                    <TextField
+                                        label="Hint"
+                                        value={"**Add** {{quantity}} more to get {{name}}"}
+                                        onChange={() => { }}
+                                        helpText="We’ll use this address if we need to contact you about your account."
+                                        autoComplete="off"
+                                    />
+                                </FormLayout>
+
+                            </Card.Section>
+                        </Card>
                     </Form>
                 </Layout.Section>
             </Layout>
