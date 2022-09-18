@@ -108,41 +108,38 @@ export function RewardForm() {
                             />
                         </Card>
 
-                        <Card>
-                            <Card.Section title="Discount type">
-                                <FormLayout>
-                                    <TextField
-                                        label="Name"
-                                        value={"{{value}} % Off"}
-                                        onChange={() => { }}
-                                        autoComplete="off"
-                                    />
-                                    <ChoiceList
-                                        title="Discount type"
-                                        choices={[
-                                            { label: 'Percentage', value: 'percentage' },
-                                            { label: 'Fixed amount', value: 'fixed' },
-                                        ]}
-                                        selected={discountType.value}
-                                        onChange={discountType.onChange}
-                                    />
-                                    <TextField
-                                        label="Minimum cart quantity"
-                                        type="number"
-                                        value={""}
-                                        onChange={() => { }}
-                                        autoComplete="off"
-                                    />
-                                    <TextField
-                                        label="Hint"
-                                        value={"**Add** {{quantity}} more to get {{name}}"}
-                                        onChange={() => { }}
-                                        helpText="We’ll use this address if we need to contact you about your account."
-                                        autoComplete="off"
-                                    />
-                                </FormLayout>
-
-                            </Card.Section>
+                        <Card title="10% Off" sectioned>
+                            <FormLayout>
+                                <TextField
+                                    label="Name"
+                                    value={"{{value}} % Off"}
+                                    onChange={() => { }}
+                                    autoComplete="off"
+                                />
+                                <ChoiceList
+                                    title="Discount type"
+                                    choices={[
+                                        { label: 'Percentage', value: 'percentage' },
+                                        { label: 'Fixed amount', value: 'fixed' },
+                                    ]}
+                                    selected={discountType.value}
+                                    onChange={discountType.onChange}
+                                />
+                                <TextField
+                                    label="Minimum cart quantity"
+                                    type="number"
+                                    value={""}
+                                    onChange={() => { }}
+                                    autoComplete="off"
+                                />
+                                <TextField
+                                    label="Hint"
+                                    value={"**Add** {{quantity}} more to get {{name}}"}
+                                    onChange={() => { }}
+                                    helpText="We’ll use this address if we need to contact you about your account."
+                                    autoComplete="off"
+                                />
+                            </FormLayout>
                         </Card>
                     </Form>
                 </Layout.Section>
