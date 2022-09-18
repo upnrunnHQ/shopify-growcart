@@ -72,8 +72,6 @@ export function RewardForm() {
         },
     });
 
-    console.log(discounts);
-
     return (
         <Stack vertical>
             <Layout>
@@ -135,7 +133,7 @@ export function RewardForm() {
                                     />
                                     <TextField
                                         label="Hint"
-                                        value={"**Add** {{quantity}} more to get {{name}}"}
+                                        value={discount.hint}
                                         onChange={() => { }}
                                         helpText="We’ll use this address if we need to contact you about your account."
                                         autoComplete="off"
