@@ -7,9 +7,10 @@ import { Shopify, LATEST_API_VERSION } from "@shopify/shopify-api";
 
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
-import { setupGDPRWebHooks } from "./gdpr.js";
-import productCreator from "./helpers/product-creator.js";
+import applyQrCodeApiEndpoints from "./middleware/growcart-api.js";
 import redirectToAuth from "./helpers/redirect-to-auth.js";
+import { QRCodesDB } from "./growcart-db.js";
+import { setupGDPRWebHooks } from "./gdpr.js";
 import { BillingInterval } from "./helpers/ensure-billing.js";
 import { AppInstallations } from "./app_installations.js";
 
@@ -21,7 +22,11 @@ const PORT = parseInt(process.env.BACKEND_PORT || process.env.PORT, 10);
 const DEV_INDEX_PATH = `${process.cwd()}/frontend/`;
 const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 
-const DB_PATH = `${process.cwd()}/database.sqlite`;
+const dbFile = join(process.cwd(), "database.sqlite");
+const sessionDb = new Shopify.Session.SQLiteSessionStorage(dbFile);
+// Initialize SQLite DB
+QRCodesDB.db = sessionDb.db;
+QRCodesDB.init();
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
@@ -31,8 +36,7 @@ Shopify.Context.initialize({
   HOST_SCHEME: process.env.HOST.split("://")[0],
   API_VERSION: LATEST_API_VERSION,
   IS_EMBEDDED_APP: true,
-  // This should be replaced with your preferred storage strategy
-  SESSION_STORAGE: new Shopify.Session.SQLiteSessionStorage(DB_PATH),
+  SESSION_STORAGE: sessionDb,
 });
 
 Shopify.Webhooks.Registry.addHandler("APP_UNINSTALLED", {
@@ -92,24 +96,6 @@ export async function createServer(
     }
   });
 
-  app.get("/api/reward", async (req, res) => {
-    res.status(200).send({
-      name: 'Cart threshold incentives (by quantity)',
-      type: 'minimum_cart_quantity',
-      rules: [
-        {
-          id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
-          name: '10% Off',
-          type: 'percent',
-          value: 10,
-          quantity: 2,
-          hint: '**Add** {{quantity}} more to get {{name}}',
-          enabled: true,
-        }
-      ]
-    });
-  });
-
   // All endpoints after this point will require an active session
   app.use(
     "/api/*",
@@ -118,42 +104,11 @@ export async function createServer(
     })
   );
 
-  app.get("/api/products/count", async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(
-      req,
-      res,
-      app.get("use-online-tokens")
-    );
-    const { Product } = await import(
-      `@shopify/shopify-api/dist/rest-resources/${Shopify.Context.API_VERSION}/index.js`
-    );
-
-    const countData = await Product.count({ session });
-    res.status(200).send(countData);
-  });
-
-  app.get("/api/products/create", async (req, res) => {
-    const session = await Shopify.Utils.loadCurrentSession(
-      req,
-      res,
-      app.get("use-online-tokens")
-    );
-    let status = 200;
-    let error = null;
-
-    try {
-      await productCreator(session);
-    } catch (e) {
-      console.log(`Failed to process products/create: ${e.message}`);
-      status = 500;
-      error = e.message;
-    }
-    res.status(status).send({ success: status === 200, error });
-  });
-
   // All endpoints after this point will have access to a request.body
   // attribute, as a result of the express.json() middleware
   app.use(express.json());
+
+  applyQrCodeApiEndpoints(app);
 
   app.use((req, res, next) => {
     const shop = Shopify.Utils.sanitizeShop(req.query.shop);

@@ -128,7 +128,7 @@ export const GrowCartDB = {
           shopDomain VARCHAR(511) NOT NULL,
           minimumRequiremenType VARCHAR(255) NOT NULL,
           discountType VARCHAR(255) NOT NULL,
-          discounts VARCHAR(255) NOT NULL,
+          discounts TEXT NOT NULL,
           createdAt DATETIME NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP, 'localtime'))
         )
       `;
