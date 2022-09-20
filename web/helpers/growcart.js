@@ -3,7 +3,7 @@ import { GrowCartDB } from "../growcart-db.js";
 
 export async function getSettingsOr404(req, res, checkDomain = true) {
     try {
-        const response = await GrowCartDB.read(req.params.id);
+        const response = await GrowCartDB.readById(req.params.id);
         if (
             response === undefined ||
             (checkDomain &&

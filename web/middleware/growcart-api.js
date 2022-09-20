@@ -29,7 +29,7 @@ export default function applyGrowCartApiEndpoints(app) {
                 shopDomain: await getShopUrlFromSession(req, res),
             });
             const response = await formatSettingsResponse(req, res, [
-                await GrowCartDB.read(id),
+                await GrowCartDB.readById(id),
             ]);
             res.status(201).send(response);
         } catch (error) {
@@ -46,18 +46,17 @@ export default function applyGrowCartApiEndpoints(app) {
         }
     });
 
-    app.patch("/api/settings/:id", async (req, res) => {
+    app.post("/api/settings/:id", async (req, res) => {
         const settings = await getSettingsOr404(req, res);
 
         if (settings) {
             try {
                 await GrowCartDB.update(req.params.id, await parseSettingsBody(req));
                 const response = await formatSettingsResponse(req, res, [
-                    await GrowCartDB.read(req.params.id),
+                    await GrowCartDB.readById(req.params.id),
                 ]);
 
-                console.log(response);
-                res.status(200).send(response[0]);
+                res.status(200).send(response);
             } catch (error) {
                 res.status(500).send(error.message);
             }

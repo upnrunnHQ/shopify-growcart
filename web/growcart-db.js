@@ -94,6 +94,19 @@ export const GrowCartDB = {
         return rows[0];
     },
 
+    readById: async function (id) {
+        await this.ready;
+        const query = `
+      SELECT * FROM ${this.cartSettingsTableName}
+      WHERE id = ?;
+    `;
+
+        const rows = await this.__query(query, [id]);
+        if (!Array.isArray(rows) || rows?.length !== 1) return undefined;
+
+        return rows[0];
+    },
+
     delete: async function (id) {
         await this.ready;
         const query = `

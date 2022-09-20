@@ -20,10 +20,7 @@ import { useForm, useField } from "@shopify/react-form";
 import { useAuthenticatedFetch, useAppMutation } from "../hooks";
 
 export function RewardForm(props) {
-    const {
-        mutate,
-        isLoading
-    } = useAppMutation({
+    const mutation = useAppMutation({
         url: `/api/settings/${props.id}`,
         fetchInit: {
             method: "POST",
@@ -57,7 +54,6 @@ export function RewardForm(props) {
     const navigate = useNavigate();
     const appBridge = useAppBridge();
     const fetch = useAuthenticatedFetch();
-    const onSubmit = async (body) => console.log("submit", body);
     const {
         fields: {
             minimumRequiremenType,
@@ -76,8 +72,16 @@ export function RewardForm(props) {
             discountType: useField(settings.discountType),
             discounts: useField(settings.discounts),
         },
-        async onSubmit(form) {
-            console.log(form);
+        async onSubmit(data) {
+            mutation.mutate({
+                ...props,
+                ...data
+            });
+
+            console.log({
+                ...props,
+                ...data
+            });
             return { status: 'success' };
         },
     });
