@@ -17,10 +17,9 @@ import {
     RequirementType,
 } from "@shopify/discount-app-components";
 import { useForm, useField } from "@shopify/react-form";
-import { useAuthenticatedFetch, useAppQuery } from "../hooks";
+import { useAuthenticatedFetch, useAppMutation } from "../hooks";
 
 export function RewardForm(props) {
-    console.log(props);
     const [settings, setSettings] = useState({
         minimumRequiremenType: [RequirementType.Subtotal],
         discountType: ["percentage"],
