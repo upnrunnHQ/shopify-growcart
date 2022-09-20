@@ -22,22 +22,6 @@ export default function applyGrowCartApiEndpoints(app) {
         }
     });
 
-    app.patch("/api/settings/:id", async (req, res) => {
-        const settings = await getSettingsOr404(req, res);
-
-        if (settings) {
-            try {
-                await GrowCartDB.update(req.params.id, await parseSettingsBody(req));
-                const response = await formatSettingsResponse(req, res, [
-                    await GrowCartDB.read(req.params.id),
-                ]);
-                res.status(200).send(response[0]);
-            } catch (error) {
-                res.status(500).send(error.message);
-            }
-        }
-    });
-
     app.get("/api/settings", async (req, res) => {
         try {
             const rawCodeData = await GrowCartDB.list(
@@ -58,6 +42,22 @@ export default function applyGrowCartApiEndpoints(app) {
         if (settings) {
             const formattedSettings = await formatSettingsResponse(req, res, [settings]);
             res.status(200).send(formattedSettings[0]);
+        }
+    });
+
+    app.patch("/api/settings/:id", async (req, res) => {
+        const settings = await getSettingsOr404(req, res);
+
+        if (settings) {
+            try {
+                await GrowCartDB.update(req.params.id, await parseSettingsBody(req));
+                const response = await formatSettingsResponse(req, res, [
+                    await GrowCartDB.read(req.params.id),
+                ]);
+                res.status(200).send(response[0]);
+            } catch (error) {
+                res.status(500).send(error.message);
+            }
         }
     });
 

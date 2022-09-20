@@ -5,11 +5,23 @@ import {
   Page,
   SkeletonBodyText,
 } from "@shopify/polaris";
+import { useAppQuery } from "../hooks";
 import { RewardForm } from "../components";
 
 export default function HomePage() {
-  const isLoading = false;
-  const isRefetching = false;
+  const {
+    data: settings,
+    isLoading,
+    isRefetching,
+  } = useAppQuery({
+    url: "/api/settings",
+    reactQueryOptions: {
+      refetchOnReconnect: false,
+    },
+  });
+
+  console.log(settings);
+  
   const rewards = [
     {
       createdAt: "2022-06-13",

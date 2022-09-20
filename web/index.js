@@ -7,7 +7,7 @@ import { Shopify, LATEST_API_VERSION } from "@shopify/shopify-api";
 
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
-import applyQrCodeApiEndpoints from "./middleware/growcart-api.js";
+import applyGrowCartApiEndpoints from "./middleware/growcart-api.js";
 import redirectToAuth from "./helpers/redirect-to-auth.js";
 import { GrowCartDB } from "./growcart-db.js";
 import { setupGDPRWebHooks } from "./gdpr.js";
@@ -108,7 +108,7 @@ export async function createServer(
   // attribute, as a result of the express.json() middleware
   app.use(express.json());
 
-  applyQrCodeApiEndpoints(app);
+  applyGrowCartApiEndpoints(app);
 
   app.use((req, res, next) => {
     const shop = Shopify.Utils.sanitizeShop(req.query.shop);
