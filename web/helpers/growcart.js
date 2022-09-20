@@ -32,3 +32,7 @@ export async function parseSettingsBody(req, res) {
         discounts: req.body.discounts,
     };
 }
+
+export async function formatSettingsResponse(req, res, rawCodeData) {
+    return rawCodeData;
+}

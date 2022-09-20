@@ -1,4 +1,4 @@
-import { GrowCartDB } from "../qr-codes-db.js";
+import { GrowCartDB } from "../growcart-db.js";
 import {
     getSettingsOr404,
     getShopUrlFromSession,
@@ -13,7 +13,9 @@ export default function applyGrowCartApiEndpoints(app) {
                 ...(await parseSettingsBody(req)),
                 shopDomain: await getShopUrlFromSession(req, res),
             });
-            const response = await GrowCartDB.read(id);
+            const response = await formatSettingsResponse(req, res, [
+                await GrowCartDB.read(id),
+            ]);
             res.status(201).send(response);
         } catch (error) {
             res.status(500).send(error.message);

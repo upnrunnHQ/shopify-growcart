@@ -9,7 +9,7 @@ import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
 import applyQrCodeApiEndpoints from "./middleware/growcart-api.js";
 import redirectToAuth from "./helpers/redirect-to-auth.js";
-import { QRCodesDB } from "./growcart-db.js";
+import { GrowCartDB } from "./growcart-db.js";
 import { setupGDPRWebHooks } from "./gdpr.js";
 import { BillingInterval } from "./helpers/ensure-billing.js";
 import { AppInstallations } from "./app_installations.js";
@@ -25,8 +25,8 @@ const PROD_INDEX_PATH = `${process.cwd()}/frontend/dist/`;
 const dbFile = join(process.cwd(), "database.sqlite");
 const sessionDb = new Shopify.Session.SQLiteSessionStorage(dbFile);
 // Initialize SQLite DB
-QRCodesDB.db = sessionDb.db;
-QRCodesDB.init();
+GrowCartDB.db = sessionDb.db;
+GrowCartDB.init();
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,
