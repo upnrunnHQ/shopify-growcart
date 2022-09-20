@@ -34,7 +34,7 @@ export function RewardForm(props) {
             {
                 id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
                 title: '10% Off',
-                type: 'percent',
+                type: 'percentage',
                 value: 10,
                 amountOrQuantity: 2,
                 hint: 'Add {{quantity}} more to get {{title}}',
@@ -43,7 +43,7 @@ export function RewardForm(props) {
             {
                 id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
                 title: '20% Off',
-                type: 'percent',
+                type: 'fixed',
                 value: 20,
                 amountOrQuantity: 5,
                 hint: 'Add {{quantity}} more to get {{title}}',
@@ -82,6 +82,7 @@ export function RewardForm(props) {
                 ...props,
                 ...data
             });
+
             return { status: 'success' };
         },
     });
@@ -135,7 +136,7 @@ export function RewardForm(props) {
                                             { label: 'Percentage', value: 'percentage' },
                                             { label: 'Fixed amount', value: 'fixed' },
                                         ]}
-                                        selected={[discount.type]}
+                                        selected={discount.type}
                                         onChange={() => { }}
                                     />
                                     <TextField
