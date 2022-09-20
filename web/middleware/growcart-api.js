@@ -55,6 +55,8 @@ export default function applyGrowCartApiEndpoints(app) {
                 const response = await formatSettingsResponse(req, res, [
                     await GrowCartDB.read(req.params.id),
                 ]);
+
+                console.log(response);
                 res.status(200).send(response[0]);
             } catch (error) {
                 res.status(500).send(error.message);

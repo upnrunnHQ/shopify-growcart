@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
     Card,
     Form,
@@ -20,9 +20,19 @@ import { useForm, useField } from "@shopify/react-form";
 import { useAuthenticatedFetch, useAppMutation } from "../hooks";
 
 export function RewardForm(props) {
+    const {
+        mutate,
+        isLoading
+    } = useAppMutation({
+        url: `/api/settings/${props.id}`,
+        fetchInit: {
+            method: "POST",
+            headers: { "Content-Type": "application/json" }
+        }
+    });
+
     const [settings, setSettings] = useState({
-        minimumRequiremenType: [RequirementType.Subtotal],
-        discountType: ["percentage"],
+        ...props,
         discounts: [
             {
                 id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
