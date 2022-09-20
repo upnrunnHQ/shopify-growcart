@@ -25,7 +25,7 @@ export async function getShopUrlFromSession(req, res) {
     return `https://${session.shop}`;
 }
 
-export async function parseSettingsBody(req, res) {
+export async function parseSettingsBody(req) {
     return {
         minimumRequiremenType: req.body.minimumRequiremenType,
         discountType: req.body.discountType,

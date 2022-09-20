@@ -7,6 +7,21 @@ import {
 } from "../helpers/growcart.js";
 
 export default function applyGrowCartApiEndpoints(app) {
+    app.get("/api/settings", async (req, res) => {
+        try {
+            const rawCodeData = await GrowCartDB.read(
+                await getShopUrlFromSession(req, res)
+            );
+
+            const response = await formatSettingsResponse(req, res, rawCodeData);
+
+            res.status(200).send(response);
+        } catch (error) {
+            console.error(error);
+            res.status(500).send(error.message);
+        }
+    });
+
     app.post("/api/settings", async (req, res) => {
         try {
             const id = await GrowCartDB.create({
@@ -18,20 +33,6 @@ export default function applyGrowCartApiEndpoints(app) {
             ]);
             res.status(201).send(response);
         } catch (error) {
-            res.status(500).send(error.message);
-        }
-    });
-
-    app.get("/api/settings", async (req, res) => {
-        try {
-            const rawCodeData = await GrowCartDB.list(
-                await getShopUrlFromSession(req, res)
-            );
-
-            const response = await formatSettingsResponse(req, res, rawCodeData);
-            res.status(200).send(response);
-        } catch (error) {
-            console.error(error);
             res.status(500).send(error.message);
         }
     });

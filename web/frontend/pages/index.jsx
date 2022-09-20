@@ -12,28 +12,12 @@ export default function HomePage() {
   const {
     data: settings,
     isLoading,
-    isRefetching,
   } = useAppQuery({
     url: "/api/settings",
     reactQueryOptions: {
       refetchOnReconnect: false,
     },
   });
-
-  console.log(settings);
-  
-  const rewards = [
-    {
-      createdAt: "2022-06-13",
-      destination: "checkout",
-      title: "My first QR code",
-      id: 1,
-      discountCode: "SUMMERDISCOUNT",
-      product: {
-        title: "Faded t-shirt",
-      }
-    },
-  ];
 
   return (
     <Page narrowWidth>
@@ -45,8 +29,7 @@ export default function HomePage() {
               <Loading />
               <SkeletonBodyText />
             </Card>
-          ) : null}
-          <RewardForm />
+          ) : <RewardForm {...settings} />}
         </Layout.Section>
       </Layout>
     </Page>

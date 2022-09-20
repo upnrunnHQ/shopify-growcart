@@ -71,14 +71,25 @@ export const GrowCartDB = {
         return await this.__query(query, [shopDomain]);
     },
 
-    read: async function (id) {
+    read: async function (shopDomain) {
         await this.ready;
         const query = `
       SELECT * FROM ${this.cartSettingsTableName}
-      WHERE id = ?;
+      WHERE shopDomain = ?;
     `;
-        const rows = await this.__query(query, [id]);
-        if (!Array.isArray(rows) || rows?.length !== 1) return undefined;
+
+        const rows = await this.__query(query, [shopDomain]);
+        if (!Array.isArray(rows) || rows?.length !== 1) {
+            const settings = {
+                shopDomain,
+                minimumRequiremenType: ['SUBTOTAL'],
+                discountType: ["percentage"],
+                discounts: [],
+            }
+            this.create(settings);
+
+            return settings
+        };
 
         return rows[0];
     },

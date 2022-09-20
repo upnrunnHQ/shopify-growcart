@@ -19,7 +19,8 @@ import {
 import { useForm, useField } from "@shopify/react-form";
 import { useAuthenticatedFetch, useAppQuery } from "../hooks";
 
-export function RewardForm() {
+export function RewardForm(props) {
+    console.log(props);
     const [settings, setSettings] = useState({
         minimumRequiremenType: [RequirementType.Subtotal],
         discountType: ["percentage"],
@@ -107,7 +108,7 @@ export function RewardForm() {
                         </Card>
 
                         {discounts.value.map(discount => (
-                            <Card title={discount.title} sectioned>
+                            <Card title={discount.title} sectioned key={discount.id}>
                                 <FormLayout>
                                     <TextField
                                         label="Title"
