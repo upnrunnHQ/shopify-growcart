@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
     Card,
     Form,
@@ -11,8 +11,6 @@ import {
 } from "@shopify/polaris";
 import {
     ContextualSaveBar,
-    useAppBridge,
-    useNavigate,
 } from "@shopify/app-bridge-react";
 import {
     RequirementType,
@@ -56,13 +54,9 @@ export function RewardForm(props) {
         discounts: JSON.parse(props.discounts),
         // discounts: staticDiscounts,
     });
-    const navigate = useNavigate();
-    const appBridge = useAppBridge();
-    const fetch = useAuthenticatedFetch();
     const {
         fields: {
             minimumRequiremenType,
-            discountType,
             discounts
         },
         submit,
@@ -74,42 +68,41 @@ export function RewardForm(props) {
     } = useForm({
         fields: {
             minimumRequiremenType: useField(settings.minimumRequiremenType),
-            discountType: useField(settings.discountType),
             discounts: useField(settings.discounts),
         },
         async onSubmit(data) {
-            mutation.mutate({
-                ...props,
-                ...data
-            });
+            // mutation.mutate({
+            //     ...props,
+            //     ...data
+            // });
 
             return { status: 'success' };
         },
     });
+    const contextBar = dirty ? (
+        <ContextualSaveBar
+            fullWidth
+            saveAction={{
+                onAction: submit,
+                loading: submitting,
+                disabled: false,
+            }}
+            discardAction={{
+                onAction: reset,
+            }}
+        />
+    ) : null;
 
     function updateDiscounts(discount) {
         discounts.onChange(discounts.value.map(d => discount.id === d.id ? discount : d));
     }
 
-    return (
-        <Form>
-            <ContextualSaveBar
-                saveAction={{
-                    label: "Save",
-                    onAction: submit,
-                    loading: submitting,
-                    disabled: submitting,
-                }}
-                discardAction={{
-                    label: "Discard",
-                    onAction: reset,
-                    loading: submitting,
-                    disabled: submitting,
-                }}
-                visible={dirty}
-                fullWidth
-            />
+    console.log(submitting);
+    console.log(dirty);
 
+    return (
+        <Form onSubmit={submit}>
+            {contextBar}
             <Layout>
                 <Layout.Section>
                     <Card title="Minimum requirement type" sectioned>
