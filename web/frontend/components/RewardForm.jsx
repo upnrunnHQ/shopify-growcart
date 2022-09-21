@@ -18,6 +18,7 @@ import {
     RequirementType,
 } from "@shopify/discount-app-components";
 import { useForm, useField } from "@shopify/react-form";
+import { v4 as uuidv4 } from 'uuid';
 import { useAuthenticatedFetch, useAppMutation } from "../hooks";
 
 export function RewardForm(props) {
@@ -180,7 +181,18 @@ export function RewardForm(props) {
                 </Layout.Section>
 
                 <Layout.Section>
-                    <Button>Add reward</Button>
+                    <Button onClick={() => discounts.onChange([
+                        ...discounts.value,
+                        {
+                            id: uuidv4(),
+                            title: '10% Off',
+                            type: 'percentage',
+                            value: 10,
+                            amountOrQuantity: 2,
+                            hint: 'Add {{quantity}} more to get {{title}}',
+                            enabled: true,
+                        }
+                    ])}>Add reward</Button>
                 </Layout.Section>
             </Layout>
         </Form>
