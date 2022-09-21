@@ -4,9 +4,10 @@ import {
     Form,
     FormLayout,
     ChoiceList,
-    Stack,
+    Button,
     Layout,
-    TextField
+    TextField,
+    Heading
 } from "@shopify/polaris";
 import {
     ContextualSaveBar,
@@ -88,39 +89,46 @@ export function RewardForm(props) {
     }
 
     return (
-        <Stack vertical>
+        <Form>
+            <ContextualSaveBar
+                saveAction={{
+                    label: "Save",
+                    onAction: submit,
+                    loading: submitting,
+                    disabled: submitting,
+                }}
+                discardAction={{
+                    label: "Discard",
+                    onAction: reset,
+                    loading: submitting,
+                    disabled: submitting,
+                }}
+                visible={dirty}
+                fullWidth
+            />
+
             <Layout>
                 <Layout.Section>
-                    <Form>
-                        <ContextualSaveBar
-                            saveAction={{
-                                label: "Save",
-                                onAction: submit,
-                                loading: submitting,
-                                disabled: submitting,
-                            }}
-                            discardAction={{
-                                label: "Discard",
-                                onAction: reset,
-                                loading: submitting,
-                                disabled: submitting,
-                            }}
-                            visible={dirty}
-                            fullWidth
+                    <Card title="Minimum requirement type" sectioned>
+                        <ChoiceList
+                            title="Minimum requirement type"
+                            titleHidden
+                            choices={[
+                                { label: 'Minimum purchase amount', value: RequirementType.Subtotal },
+                                { label: 'Minimum quantity of items', value: RequirementType.Quantity },
+                            ]}
+                            selected={minimumRequiremenType.value}
+                            onChange={minimumRequiremenType.onChange}
                         />
-                        <Card title="Minimum requirement type" sectioned>
-                            <ChoiceList
-                                title="Minimum requirement type"
-                                titleHidden
-                                choices={[
-                                    { label: 'Minimum purchase amount', value: RequirementType.Subtotal },
-                                    { label: 'Minimum quantity of items', value: RequirementType.Quantity },
-                                ]}
-                                selected={minimumRequiremenType.value}
-                                onChange={minimumRequiremenType.onChange}
-                            />
-                        </Card>
+                    </Card>
+                </Layout.Section>
 
+                <Layout.Section>
+                    <Heading>Rewards</Heading>
+                </Layout.Section>
+
+                <Layout.Section>
+                    <div className="Discounts-List">
                         {discounts.value.map(discount => (
                             <Card title={discount.title} sectioned key={discount.id}>
                                 <FormLayout>
@@ -168,9 +176,13 @@ export function RewardForm(props) {
                                 </FormLayout>
                             </Card>
                         ))}
-                    </Form>
+                    </div>
+                </Layout.Section>
+
+                <Layout.Section>
+                    <Button>Add reward</Button>
                 </Layout.Section>
             </Layout>
-        </Stack>
+        </Form>
     );
 }
