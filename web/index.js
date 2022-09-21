@@ -4,6 +4,7 @@ import { readFileSync } from "fs";
 import express from "express";
 import cookieParser from "cookie-parser";
 import { Shopify, LATEST_API_VERSION } from "@shopify/shopify-api";
+import crypto from "crypto";
 
 import applyAuthMiddleware from "./middleware/auth.js";
 import verifyRequest from "./middleware/verify-request.js";
@@ -65,6 +66,47 @@ const BILLING_SETTINGS = {
 // https://shopify.dev/apps/webhooks/configuration/mandatory-webhooks
 setupGDPRWebHooks("/api/webhooks");
 
+export const verifyAppProxyExtensionSignature = (
+  query = {},
+  shopifyApiSecret
+) => {
+  const { signature = "", ...otherQueryParams } = query;
+
+  const input = Object.keys(otherQueryParams)
+    .sort()
+    .map((key) => {
+      const value = otherQueryParams[key];
+      return `${key}=${value}`;
+    })
+    .join("");
+
+  const hmac = crypto
+    .createHmac("sha256", shopifyApiSecret)
+    .update(input)
+    .digest("hex");
+
+  const digest = Buffer.from(hmac, "utf-8");
+  const checksum = Buffer.from(signature, "utf-8");
+
+  return (
+    digest.length === checksum.length &&
+    crypto.timingSafeEqual(digest, checksum)
+  );
+};
+
+const verifyAppProxyExtensionSignatureMiddleware = (req, res, next) => {
+  if (
+    verifyAppProxyExtensionSignature(
+      req.query,
+      process.env.SHOPIFY_API_SECRET
+    )
+  ) {
+    return next();
+  }
+
+  res.status(401).send('Unauthorized!');
+};
+
 // export for test use only
 export async function createServer(
   root = process.cwd(),
@@ -94,6 +136,10 @@ export async function createServer(
         res.status(500).send(e.message);
       }
     }
+  });
+
+  app.get("/api/rewards", verifyAppProxyExtensionSignatureMiddleware, async (req, res) => {
+    res.status(200).send(['']);
   });
 
   // All endpoints after this point will require an active session
