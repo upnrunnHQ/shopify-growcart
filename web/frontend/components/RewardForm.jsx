@@ -21,6 +21,27 @@ import { useForm, useField } from "@shopify/react-form";
 import { v4 as uuidv4 } from 'uuid';
 import { useAuthenticatedFetch, useAppMutation } from "../hooks";
 
+const staticDiscounts = [
+    {
+        id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
+        title: '10% Off',
+        type: 'percentage',
+        value: 10,
+        amountOrQuantity: 2,
+        hint: 'Add {{quantity}} more to get {{title}}',
+        enabled: true,
+    },
+    {
+        id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
+        title: '20% Off',
+        type: 'fixed',
+        value: 20,
+        amountOrQuantity: 5,
+        hint: 'Add {{quantity}} more to get {{title}}',
+        enabled: true,
+    }
+];
+
 export function RewardForm(props) {
     const mutation = useAppMutation({
         url: `/api/settings/${props.id}`,
@@ -33,26 +54,7 @@ export function RewardForm(props) {
     const [settings, setSettings] = useState({
         ...props,
         discounts: JSON.parse(props.discounts),
-        // discounts: [
-        //     {
-        //         id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
-        //         title: '10% Off',
-        //         type: 'percentage',
-        //         value: 10,
-        //         amountOrQuantity: 2,
-        //         hint: 'Add {{quantity}} more to get {{title}}',
-        //         enabled: true,
-        //     },
-        //     {
-        //         id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
-        //         title: '20% Off',
-        //         type: 'fixed',
-        //         value: 20,
-        //         amountOrQuantity: 5,
-        //         hint: 'Add {{quantity}} more to get {{title}}',
-        //         enabled: true,
-        //     }
-        // ]
+        // discounts: staticDiscounts,
     });
     const navigate = useNavigate();
     const appBridge = useAppBridge();
