@@ -23,7 +23,7 @@ export const useAppQuery = ({ url, fetchInit = {}, reactQueryOptions }) => {
     };
   }, [url, JSON.stringify(fetchInit)]);
 
-  return useQuery(url, fetch, {
+  return useQuery([url], fetch, {
     ...reactQueryOptions,
     refetchOnWindowFocus: false,
   });

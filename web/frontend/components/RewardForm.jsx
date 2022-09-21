@@ -16,8 +16,9 @@ import {
     RequirementType,
 } from "@shopify/discount-app-components";
 import { useForm, useField } from "@shopify/react-form";
+import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid';
-import { useAuthenticatedFetch, useAppMutation } from "../hooks";
+import { useAppMutation } from "../hooks";
 
 const staticDiscounts = [
     {
@@ -41,11 +42,17 @@ const staticDiscounts = [
 ];
 
 export function RewardForm(props) {
+    const queryClient = useQueryClient();
     const mutation = useAppMutation({
         url: `/api/settings/${props.id}`,
         fetchInit: {
             method: "POST",
             headers: { "Content-Type": "application/json" }
+        },
+        reactMutationOptions: {
+            onSuccess: () => {
+                // queryClient.invalidateQueries('/api/settings');
+            }
         }
     });
 
@@ -70,39 +77,42 @@ export function RewardForm(props) {
             minimumRequiremenType: useField(settings.minimumRequiremenType),
             discounts: useField(settings.discounts),
         },
-        async onSubmit(data) {
-            // mutation.mutate({
-            //     ...props,
-            //     ...data
-            // });
-
-            return { status: 'success' };
-        },
+        async onSubmit(fieldValues) {
+            try {
+                const response = await mutation.mutateAsync({
+                    ...props,
+                    ...fieldValues
+                })
+                console.log(response);
+            } catch (remoteErrors) {
+                return { status: 'fail', errors: remoteErrors };
+            } finally {
+                return { status: 'success' }
+            }
+        }
     });
-    const contextBar = dirty ? (
-        <ContextualSaveBar
-            fullWidth
-            saveAction={{
-                onAction: submit,
-                loading: submitting,
-                disabled: false,
-            }}
-            discardAction={{
-                onAction: reset,
-            }}
-        />
-    ) : null;
 
     function updateDiscounts(discount) {
         discounts.onChange(discounts.value.map(d => discount.id === d.id ? discount : d));
     }
 
-    console.log(submitting);
-    console.log(dirty);
-
     return (
         <Form onSubmit={submit}>
-            {contextBar}
+            <ContextualSaveBar
+                saveAction={{
+                    label: "Save",
+                    onAction: submit,
+                    loading: submitting,
+                    disabled: submitting,
+                }}
+                discardAction={{
+                    label: "Discard",
+                    onAction: reset,
+                    disabled: submitting,
+                }}
+                visible={dirty}
+                fullWidth
+            />
             <Layout>
                 <Layout.Section>
                     <Card title="Minimum requirement type" sectioned>
