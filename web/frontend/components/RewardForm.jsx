@@ -83,7 +83,9 @@ export function RewardForm(props) {
                     ...props,
                     ...fieldValues
                 })
-                console.log(response);
+                console.log(fieldValues);
+                console.log(JSON.parse(response[0].discounts));
+                makeClean();
             } catch (remoteErrors) {
                 return { status: 'fail', errors: remoteErrors };
             } finally {
