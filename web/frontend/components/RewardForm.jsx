@@ -98,6 +98,10 @@ export function RewardForm(props) {
         discounts.onChange(discounts.value.map(d => discount.id === d.id ? discount : d));
     }
 
+    function removeDiscounts(discount) {
+        discounts.onChange(discounts.value.filter(d => discount.id !== d.id));
+    }
+
     return (
         <Form onSubmit={submit}>
             <ContextualSaveBar
@@ -181,6 +185,8 @@ export function RewardForm(props) {
                                         helpText="We’ll use this address if we need to contact you about your account."
                                         autoComplete="off"
                                     />
+
+                                    <Button size="slim" destructive onClick={() => removeDiscounts(discount)}>Delete</Button>
                                 </FormLayout>
                             </Card>
                         ))}
