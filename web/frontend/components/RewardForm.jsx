@@ -30,26 +30,27 @@ export function RewardForm(props) {
 
     const [settings, setSettings] = useState({
         ...props,
-        discounts: [
-            {
-                id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
-                title: '10% Off',
-                type: 'percentage',
-                value: 10,
-                amountOrQuantity: 2,
-                hint: 'Add {{quantity}} more to get {{title}}',
-                enabled: true,
-            },
-            {
-                id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
-                title: '20% Off',
-                type: 'fixed',
-                value: 20,
-                amountOrQuantity: 5,
-                hint: 'Add {{quantity}} more to get {{title}}',
-                enabled: true,
-            }
-        ]
+        discounts: JSON.parse(props.discounts),
+        // discounts: [
+        //     {
+        //         id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
+        //         title: '10% Off',
+        //         type: 'percentage',
+        //         value: 10,
+        //         amountOrQuantity: 2,
+        //         hint: 'Add {{quantity}} more to get {{title}}',
+        //         enabled: true,
+        //     },
+        //     {
+        //         id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
+        //         title: '20% Off',
+        //         type: 'fixed',
+        //         value: 20,
+        //         amountOrQuantity: 5,
+        //         hint: 'Add {{quantity}} more to get {{title}}',
+        //         enabled: true,
+        //     }
+        // ]
     });
     const navigate = useNavigate();
     const appBridge = useAppBridge();
@@ -78,14 +79,13 @@ export function RewardForm(props) {
                 ...data
             });
 
-            console.log({
-                ...props,
-                ...data
-            });
-
             return { status: 'success' };
         },
     });
+
+    function updateDiscounts(discount) {
+        discounts.onChange(discounts.value.map(d => discount.id === d.id ? discount : d));
+    }
 
     return (
         <Stack vertical>
@@ -127,7 +127,10 @@ export function RewardForm(props) {
                                     <TextField
                                         label="Title"
                                         value={discount.title}
-                                        onChange={() => { }}
+                                        onChange={(title) => updateDiscounts({
+                                            ...discount,
+                                            title
+                                        })}
                                         autoComplete="off"
                                     />
                                     <ChoiceList
@@ -137,19 +140,28 @@ export function RewardForm(props) {
                                             { label: 'Fixed amount', value: 'fixed' },
                                         ]}
                                         selected={discount.type}
-                                        onChange={() => { }}
+                                        onChange={(type) => updateDiscounts({
+                                            ...discount,
+                                            type
+                                        })}
                                     />
                                     <TextField
                                         label="Minimum cart quantity"
                                         type="number"
                                         value={discount.amountOrQuantity}
-                                        onChange={() => { }}
+                                        onChange={(amountOrQuantity) => updateDiscounts({
+                                            ...discount,
+                                            amountOrQuantity
+                                        })}
                                         autoComplete="off"
                                     />
                                     <TextField
                                         label="Hint"
                                         value={discount.hint}
-                                        onChange={() => { }}
+                                        onChange={(hint) => updateDiscounts({
+                                            ...discount,
+                                            hint
+                                        })}
                                         helpText="We’ll use this address if we need to contact you about your account."
                                         autoComplete="off"
                                     />

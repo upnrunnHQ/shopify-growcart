@@ -29,7 +29,7 @@ export async function parseSettingsBody(req) {
     return {
         minimumRequiremenType: req.body.minimumRequiremenType,
         discountType: req.body.discountType,
-        discounts: req.body.discounts,
+        discounts: JSON.stringify(req.body.discounts),
     };
 }
 
