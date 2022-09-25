@@ -34,6 +34,7 @@ const config = {
   ],
   resolve: {
     alias: {
+      api: path.resolve(__dirname, 'api/'),
       components: path.resolve(__dirname, 'components/'),
       hooks: path.resolve(__dirname, 'hooks/'),
       lib: path.resolve(__dirname, 'lib/'),

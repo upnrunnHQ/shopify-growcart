@@ -2348,7 +2348,7 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 /***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
 
 "use strict";
-eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"useCart\": () => (/* reexport safe */ _useCart__WEBPACK_IMPORTED_MODULE_0__.useCart)\n/* harmony export */ });\n/* harmony import */ var _useCart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./useCart */ \"./hooks/useCart/index.js\");\n\n\n//# sourceURL=webpack://sweet-bush-ext-9772/./hooks/index.js?");
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"useCart\": () => (/* reexport safe */ _useCart__WEBPACK_IMPORTED_MODULE_0__.useCart),\n/* harmony export */   \"useDiscountsQuery\": () => (/* reexport safe */ _useDiscountsQuery__WEBPACK_IMPORTED_MODULE_1__.useDiscountsQuery)\n/* harmony export */ });\n/* harmony import */ var _useCart__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./useCart */ \"./hooks/useCart/index.js\");\n/* harmony import */ var _useDiscountsQuery__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./useDiscountsQuery */ \"./hooks/useDiscountsQuery.js\");\n\n\n\n//# sourceURL=webpack://sweet-bush-ext-9772/./hooks/index.js?");
 
 /***/ }),
 
@@ -2371,6 +2371,17 @@ eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpac
 
 "use strict";
 eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"useCart\": () => (/* binding */ useCart)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var components_cart_context_js__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! components/cart/context.js */ \"./components/cart/context.js\");\n\n\n/**\n * The `useCart` hook provides access to the cart object. It must be a descendent of a `CartProvider` component.\n */\n\nfunction useCart() {\n  var context = react__WEBPACK_IMPORTED_MODULE_0__.useContext(components_cart_context_js__WEBPACK_IMPORTED_MODULE_1__.CartContext);\n\n  if (!context) {\n    throw new Error('Expected a Cart Context, but no Cart Context was found');\n  }\n\n  return context;\n}\n\n//# sourceURL=webpack://sweet-bush-ext-9772/./hooks/useCart/useCart.js?");
+
+/***/ }),
+
+/***/ "./hooks/useDiscountsQuery.js":
+/*!************************************!*\
+  !*** ./hooks/useDiscountsQuery.js ***!
+  \************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+eval("__webpack_require__.r(__webpack_exports__);\n/* harmony export */ __webpack_require__.d(__webpack_exports__, {\n/* harmony export */   \"useDiscountsQuery\": () => (/* binding */ useDiscountsQuery)\n/* harmony export */ });\n/* harmony import */ var react__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! react */ \"./node_modules/react/index.js\");\n/* harmony import */ var _tanstack_react_query__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! @tanstack/react-query */ \"./node_modules/@tanstack/react-query/build/lib/useQuery.mjs\");\nObject(function webpackMissingModule() { var e = new Error(\"Cannot find module 'api'\"); e.code = 'MODULE_NOT_FOUND'; throw e; }());\n\n\n\nfunction useDiscountsQuery() {\n  var _useQuery = (0,_tanstack_react_query__WEBPACK_IMPORTED_MODULE_2__.useQuery)(['discounts'], Object(function webpackMissingModule() { var e = new Error(\"Cannot find module 'api'\"); e.code = 'MODULE_NOT_FOUND'; throw e; }())),\n      isLoading = _useQuery.isLoading,\n      isError = _useQuery.isError,\n      discounts = _useQuery.data,\n      error = _useQuery.error;\n\n  return {\n    isLoading: isLoading,\n    isError: isError,\n    error: error,\n    discounts: discounts\n  };\n}\n\n//# sourceURL=webpack://sweet-bush-ext-9772/./hooks/useDiscountsQuery.js?");
 
 /***/ }),
 
