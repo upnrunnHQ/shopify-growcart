@@ -1,11 +1,3 @@
-fetch('/apps/growcart/api/rewards', {
-    headers: {
-        'ngrok-skip-browser-warning': 'skip'
-    },
-})
-    .then((response) => response.json())
-    .then((data) => console.log(data));
-
 import React from "react";
 import ReactDOM from "react-dom";
 import {
