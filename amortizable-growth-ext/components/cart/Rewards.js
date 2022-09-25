@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { useCart } from 'hooks';
+import { useDiscounts, useCart } from 'hooks';
 import { IconStar, IconLock } from 'components';
 
 function getRewardsProgress(cart, gettingMostRewards, quantityList) {
@@ -20,47 +20,46 @@ export function Rewards() {
         cart
     } = useCart();
     const reward = {
-        name: 'Cart threshold incentives (by quantity)',
-        type: 'minimum_cart_quantity',
-        rules: [
+        minimumRequiremenType: 'QUANTITY',
+        discounts: [
             {
                 id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
-                name: '10% Off',
+                title: '10% Off',
                 type: 'percent',
                 value: 10,
-                quantity: 2,
-                hint: 'Add {{quantity}} more to get {{name}}',
+                amountOrQuantity: 2,
+                hint: 'Add {{quantity}} more to get {{title}}',
                 enabled: true,
             },
             {
                 id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
-                name: '20% Off',
+                title: '20% Off',
                 type: 'percent',
                 value: 20,
-                quantity: 5,
-                hint: 'Add {{quantity}} more to get {{name}}',
+                amountOrQuantity: 5,
+                hint: 'Add {{quantity}} more to get {{title}}',
                 enabled: true,
             }
         ]
     };
 
-    if (reward.rules.length === 0) {
+    if (reward.discounts.length === 0) {
         return null;
     }
 
     let hint = '';
-    const currentRewards = cart.item_count ? reward.rules.filter(rule => rule.quantity <= cart.item_count) : reward.rules;
-    const nextRewards = cart.item_count ? reward.rules.filter(rule => rule.quantity > cart.item_count) : [];
-    const gettingMostRewards = cart.item_count ? currentRewards.length && (currentRewards.length === reward.rules.length) : false;
-    const quantityList = cart.item_count ? reward.rules.map(rule => rule.quantity) : [];
+    const currentRewards = cart.item_count ? reward.discounts.filter(rule => rule.amountOrQuantity <= cart.item_count) : reward.discounts;
+    const nextRewards = cart.item_count ? reward.discounts.filter(rule => rule.amountOrQuantity > cart.item_count) : [];
+    const gettingMostRewards = cart.item_count ? currentRewards.length && (currentRewards.length === reward.discounts.length) : false;
+    const quantityList = cart.item_count ? reward.discounts.map(rule => rule.amountOrQuantity) : [];
     const rewardsProgress = getRewardsProgress(cart, gettingMostRewards, quantityList);
 
     if (gettingMostRewards) {
         hint = 'You\'re getting the most rewards!';
     } else if (nextRewards.length) {
         hint = nextRewards[0].hint;
-        hint = hint.replace('{{quantity}}', nextRewards[0].quantity - cart.item_count);
-        hint = hint.replace('{{name}}', nextRewards[0].name);
+        hint = hint.replace('{{quantity}}', nextRewards[0].amountOrQuantity - cart.item_count);
+        hint = hint.replace('{{title}}', nextRewards[0].title);
     }
 
     useEffect(() => {
@@ -89,7 +88,6 @@ export function Rewards() {
             const x = e.pageX - slider.offsetLeft;
             const walk = (x - startX) * 3; //scroll-fast
             slider.scrollLeft = scrollLeft - walk;
-            console.log(walk);
         });
     }, [cart]);
 
@@ -106,7 +104,7 @@ export function Rewards() {
                                 </span>
                                 <span
                                     className="Rewards__text"
-                                    dangerouslySetInnerHTML={{ __html: reward.name }}
+                                    dangerouslySetInnerHTML={{ __html: reward.title }}
                                 ></span>
                             </li>
                         ))}
@@ -118,7 +116,7 @@ export function Rewards() {
                                 </span>
                                 <span
                                     className="Rewards__text"
-                                    dangerouslySetInnerHTML={{ __html: reward.name }}
+                                    dangerouslySetInnerHTML={{ __html: reward.title }}
                                 ></span>
                             </li>
                         ))}

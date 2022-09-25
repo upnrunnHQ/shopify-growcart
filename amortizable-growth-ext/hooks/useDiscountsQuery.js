@@ -5,12 +5,5 @@ import {
 import { fetchDiscounts } from 'api';
 
 export function useDiscountsQuery() {
-    const { isLoading, isError, data: discounts, error } = useQuery(['discounts'], fetchDiscounts);
-
-    return {
-        isLoading,
-        isError,
-        error,
-        discounts
-    }
+    return useQuery(['discounts'], fetchDiscounts)
 }

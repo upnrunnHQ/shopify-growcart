@@ -13,11 +13,11 @@ const queryClient = new QueryClient()
 
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
-        <DiscountsProvider>
-            <CartProvider>
+        <CartProvider>
+            <DiscountsProvider>
                 <Cart />
-            </CartProvider>
-        </DiscountsProvider>
+            </DiscountsProvider>
+        </CartProvider>
     </QueryClientProvider>,
     document.getElementById("growcarthq")
 );
