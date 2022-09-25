@@ -1,4 +1,5 @@
 export { CartProvider } from './CartProvider';
+export { DiscountsProvider } from './DiscountsProvider';
 export { Cart } from './Cart';
 export { CartDetails } from './CartDetails';
 export { Rewards } from './Rewards';

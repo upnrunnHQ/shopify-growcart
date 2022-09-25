@@ -12,7 +12,7 @@ import {
     QueryClient,
     QueryClientProvider,
 } from '@tanstack/react-query';
-import { CartProvider, Cart } from "components";
+import { CartProvider, DiscountsProvider, Cart } from "components";
 import "./product-form.js";
 import "./sass/index.scss";
 
@@ -21,9 +21,11 @@ const queryClient = new QueryClient()
 
 ReactDOM.render(
     <QueryClientProvider client={queryClient}>
-        <CartProvider>
-            <Cart />
-        </CartProvider>
+        <DiscountsProvider>
+            <CartProvider>
+                <Cart />
+            </CartProvider>
+        </DiscountsProvider>
     </QueryClientProvider>,
     document.getElementById("growcarthq")
 );
