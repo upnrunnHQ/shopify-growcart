@@ -18,6 +18,29 @@ export function DiscountsProvider({ children }) {
     const {
         cart
     } = useCart();
+    // const data = {
+    //     minimumRequiremenType: 'QUANTITY',
+    //     discounts: [
+    //         {
+    //             id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
+    //             title: '10% Off',
+    //             type: 'percent',
+    //             value: 10,
+    //             amountOrQuantity: 2,
+    //             hint: 'Add {{quantity}} more to get {{title}}',
+    //             enabled: true,
+    //         },
+    //         {
+    //             id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
+    //             title: '20% Off',
+    //             type: 'percent',
+    //             value: 20,
+    //             amountOrQuantity: 5,
+    //             hint: 'Add {{quantity}} more to get {{title}}',
+    //             enabled: true,
+    //         }
+    //     ]
+    // };
     const { data } = useDiscountsQuery();
 
     let discountsContextValue = {
@@ -56,6 +79,8 @@ export function DiscountsProvider({ children }) {
             hint,
         }
     }
+
+    console.log(discountsContextValue);
 
     return (
         <DiscountsContext.Provider value={discountsContextValue}>

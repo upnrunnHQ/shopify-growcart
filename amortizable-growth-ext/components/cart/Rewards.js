@@ -2,64 +2,20 @@ import React, { useEffect } from 'react';
 import { useDiscounts, useCart } from 'hooks';
 import { IconStar, IconLock } from 'components';
 
-function getRewardsProgress(cart, gettingMostRewards, quantityList) {
-    if (gettingMostRewards) {
-        return 100;
-    }
-
-    if (cart.item_count && quantityList.length) {
-        return (cart.item_count / Math.max(quantityList)) * 100;
-    }
-
-    return 0;
-}
-
-
 export function Rewards() {
+    const {
+        discounts,
+        currentRewards,
+        nextRewards,
+        rewardsProgress,
+        hint
+    } = useDiscounts();
     const {
         cart
     } = useCart();
-    const reward = {
-        minimumRequiremenType: 'QUANTITY',
-        discounts: [
-            {
-                id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
-                title: '10% Off',
-                type: 'percent',
-                value: 10,
-                amountOrQuantity: 2,
-                hint: 'Add {{quantity}} more to get {{title}}',
-                enabled: true,
-            },
-            {
-                id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
-                title: '20% Off',
-                type: 'percent',
-                value: 20,
-                amountOrQuantity: 5,
-                hint: 'Add {{quantity}} more to get {{title}}',
-                enabled: true,
-            }
-        ]
-    };
 
-    if (reward.discounts.length === 0) {
+    if (discounts.length === 0) {
         return null;
-    }
-
-    let hint = '';
-    const currentRewards = cart.item_count ? reward.discounts.filter(rule => rule.amountOrQuantity <= cart.item_count) : reward.discounts;
-    const nextRewards = cart.item_count ? reward.discounts.filter(rule => rule.amountOrQuantity > cart.item_count) : [];
-    const gettingMostRewards = cart.item_count ? currentRewards.length && (currentRewards.length === reward.discounts.length) : false;
-    const quantityList = cart.item_count ? reward.discounts.map(rule => rule.amountOrQuantity) : [];
-    const rewardsProgress = getRewardsProgress(cart, gettingMostRewards, quantityList);
-
-    if (gettingMostRewards) {
-        hint = 'You\'re getting the most rewards!';
-    } else if (nextRewards.length) {
-        hint = nextRewards[0].hint;
-        hint = hint.replace('{{quantity}}', nextRewards[0].amountOrQuantity - cart.item_count);
-        hint = hint.replace('{{title}}', nextRewards[0].title);
     }
 
     useEffect(() => {
