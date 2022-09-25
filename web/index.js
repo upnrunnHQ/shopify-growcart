@@ -139,7 +139,9 @@ export async function createServer(
   });
 
   app.get("/api/rewards", verifyAppProxyExtensionSignatureMiddleware, async (req, res) => {
-    res.status(200).send(['']);
+    // const session = await Shopify.Utils.loadOfflineSession(req.query.shop);
+    const response = await GrowCartDB.read(`https://${req.query.shop}`);
+    res.status(200).send(response);
   });
 
   // All endpoints after this point will require an active session
