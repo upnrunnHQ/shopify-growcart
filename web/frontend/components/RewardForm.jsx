@@ -74,17 +74,15 @@ export function RewardForm(props) {
         makeClean,
     } = useForm({
         fields: {
-            minimumRequiremenType: useField(settings.minimumRequiremenType),
+            minimumRequiremenType: useField([settings.minimumRequiremenType]),
             discounts: useField(settings.discounts),
         },
         async onSubmit(fieldValues) {
             try {
-                const response = await mutation.mutateAsync({
+                await mutation.mutateAsync({
                     ...props,
                     ...fieldValues
                 })
-                console.log(fieldValues);
-                console.log(JSON.parse(response[0].discounts));
                 makeClean();
             } catch (remoteErrors) {
                 return { status: 'fail', errors: remoteErrors };
@@ -166,7 +164,7 @@ export function RewardForm(props) {
                                         })}
                                     />
                                     <TextField
-                                        label="Minimum cart quantity"
+                                        label={minimumRequiremenType.value.includes("QUANTITY") ? "Minimum cart quantity": "Minimum cart amount"}
                                         type="number"
                                         value={discount.amountOrQuantity}
                                         onChange={(amountOrQuantity) => updateDiscounts({
@@ -174,6 +172,15 @@ export function RewardForm(props) {
                                             amountOrQuantity
                                         })}
                                         autoComplete="off"
+                                    />
+                                    <TextField
+                                        label="Value"
+                                        type="number"
+                                        value={discount.value}
+                                        onChange={(value) => updateDiscounts({
+                                            ...discount,
+                                            value
+                                        })}
                                     />
                                     <TextField
                                         label="Hint"
