@@ -8,7 +8,7 @@ function getRewardsProgress(cart, gettingMostRewards, quantityList) {
     }
 
     if (cart.item_count && quantityList.length) {
-        return (cart.item_count / Math.max(quantityList)) * 100;
+        return (cart.item_count / Math.max(...quantityList)) * 100;
     }
 
     return 0;
@@ -52,14 +52,14 @@ export function DiscountsProvider({ children }) {
         hint: '',
     };
 
-    const discounts = data ? JSON.parse(data.discounts): [];
+    const discounts = data ? JSON.parse(data.discounts) : [];
 
     if (discounts.length) {
         let hint = '';
         const currentRewards = cart.item_count ? discounts.filter(rule => rule.amountOrQuantity <= cart.item_count) : discounts;
         const nextRewards = cart.item_count ? discounts.filter(rule => rule.amountOrQuantity > cart.item_count) : [];
         const gettingMostRewards = cart.item_count ? currentRewards.length && (currentRewards.length === discounts.length) : false;
-        const quantityList = cart.item_count ? discounts.map(rule => rule.amountOrQuantity) : [];
+        const quantityList = cart.item_count ? discounts.map(rule => parseInt(rule.amountOrQuantity)) : [];
         const rewardsProgress = getRewardsProgress(cart, gettingMostRewards, quantityList);
 
         if (gettingMostRewards) {

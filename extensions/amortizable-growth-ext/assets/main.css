@@ -581,7 +581,7 @@
   font-size: 0.75rem;
   background-color: var(--growcart-progress-background);
   border-radius: 0.25rem; }
-  .progress__bar {
+  .progress div.progress__bar {
     display: flex;
     flex-direction: column;
     justify-content: center;
