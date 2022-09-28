@@ -24,13 +24,13 @@ export function formatText(input) {
     );
 }
 
-export function getRewardsProgress(cart, gettingMostRewards, quantityList) {
+export function getRewardsProgress(amountOrQuantity, gettingMostRewards, max) {
     if (gettingMostRewards) {
         return 100;
     }
 
-    if (cart.item_count && quantityList.length) {
-        return (cart.item_count / Math.max(...quantityList)) * 100;
+    if (amountOrQuantity && max) {
+        return (amountOrQuantity / max) * 100;
     }
 
     return 0;
