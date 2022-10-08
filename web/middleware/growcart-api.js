@@ -1,3 +1,4 @@
+import { Shopify } from "@shopify/shopify-api";
 import { GrowCartDB } from "../growcart-db.js";
 import {
     getSettingsOr404,
@@ -6,12 +7,50 @@ import {
     formatSettingsResponse,
 } from "../helpers/growcart.js";
 
+const CREATE_AUTOMATIC_MUTATION = `
+  mutation CreateAutomaticDiscount($discount: DiscountAutomaticAppInput!) {
+    discountCreate: discountAutomaticAppCreate(
+      automaticAppDiscount: $discount
+    ) {
+      userErrors {
+        code
+        message
+        field
+      }
+    }
+  }
+`;
+
+const runDiscountMutation = async (discount) => {
+    const session = await Shopify.Utils.loadCurrentSession(
+        req,
+        res,
+        app.get("use-online-tokens")
+    );
+
+    const client = new Shopify.Clients.Graphql(
+        session?.shop,
+        session?.accessToken
+    );
+
+    const data = await client.query({
+        data: {
+            query: CREATE_AUTOMATIC_MUTATION,
+            variables: { discount: discount },
+        },
+    });
+
+    return data.body;
+};
+
 export default function applyGrowCartApiEndpoints(app) {
     app.get("/api/settings", async (req, res) => {
         try {
             const rawCodeData = await GrowCartDB.read(
                 await getShopUrlFromSession(req, res)
             );
+
+            console.log(rawCodeData);
 
             const response = await formatSettingsResponse(req, res, rawCodeData);
 
