@@ -31,4 +31,9 @@
         background-color: rgba(var(--color-button), 1);
         color: rgba(var(--color-button-text), 1);
     }
+
+    svg {
+        width: 24px;
+        height: 24px;
+    }
 }

@@ -478,6 +478,9 @@
     line-height: calc(1 + .1 / var(--font-body-scale));
     background-color: rgba(var(--color-button), 1);
     color: rgba(var(--color-button-text), 1); }
+  .growcarthq__toggler svg {
+    width: 24px;
+    height: 24px; }
 
 .Rewards {
   --growcart-font-size: 14px;
