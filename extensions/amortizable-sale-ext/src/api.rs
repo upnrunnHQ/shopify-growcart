@@ -9,10 +9,13 @@ pub mod input {
     use super::*;
     use serde::Deserialize;
 
+    #[serde_as]
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     #[serde(rename_all(deserialize = "camelCase"))]
     pub struct Input {
         pub discount_node: DiscountNode,
+        #[serde_as(as = "DisplayFromStr")]
+        pub presentment_currency_rate: Decimal,
     }
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
@@ -21,7 +24,6 @@ pub mod input {
     }
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
-    #[serde(rename_all(deserialize = "camelCase"))]
     pub struct Metafield {
         pub value: String,
     }

@@ -21,28 +21,6 @@ const CREATE_AUTOMATIC_MUTATION = `
   }
 `;
 
-const runDiscountMutation = async (discount) => {
-    const session = await Shopify.Utils.loadCurrentSession(
-        req,
-        res,
-        app.get("use-online-tokens")
-    );
-
-    const client = new Shopify.Clients.Graphql(
-        session?.shop,
-        session?.accessToken
-    );
-
-    const data = await client.query({
-        data: {
-            query: CREATE_AUTOMATIC_MUTATION,
-            variables: { discount: discount },
-        },
-    });
-
-    return data.body;
-};
-
 export default function applyGrowCartApiEndpoints(app) {
     app.get("/api/settings", async (req, res) => {
         try {
@@ -50,7 +28,40 @@ export default function applyGrowCartApiEndpoints(app) {
                 await getShopUrlFromSession(req, res)
             );
 
-            console.log(rawCodeData);
+            const discount = {
+                functionId: "01GETZ4P8B7GWRMVSA64RM4MHZ",
+                // combinesWith: form.combinesWith,
+                startsAt: new Date(),
+                // endsAt: form.endDate,
+                metafields: [
+                    {
+                        namespace: "discounts-plus",
+                        key: "volume-config",
+                        type: "json",
+                        value: JSON.stringify({ value: 12.34 }),
+                    },
+                ],
+            };
+
+            const session = await Shopify.Utils.loadCurrentSession(
+                req,
+                res,
+                app.get("use-online-tokens")
+            );
+        
+            const client = new Shopify.Clients.Graphql(
+                session?.shop,
+                session?.accessToken
+            );
+        
+            const data = await client.query({
+                data: {
+                    query: CREATE_AUTOMATIC_MUTATION,
+                    variables: { discount: { ...discount, title: "Test" } },
+                },
+            });
+
+            console.log(JSON.stringify(data.body));
 
             const response = await formatSettingsResponse(req, res, rawCodeData);
 
