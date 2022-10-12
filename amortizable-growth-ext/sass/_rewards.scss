@@ -1,5 +1,5 @@
 .Rewards {
-    --growcart-font-size: 14px;
+    --growcart-font-size: 12px;
     --growcart-header-text-color: #ffffff;
     --growcart-header-background: #343a40;
     --growcart-spacing-top: 24px;
@@ -12,8 +12,8 @@
     --growcart-icon-background: #495057;
     --growcart-active-icon-color: #ffffff;
     --growcart-active-icon-background: #198754;
-    --growcart-progress-color: #198754;
-    --growcart-progress-background-color: #495057;
+    --growcart-progress-color: rgba(var(--color-button),var(--alpha-button-background));
+    --growcart-progress-background-color: #adb5bd;
 
     padding: var(--growcart-spacing-top) var(--growcart-spacing-right) var(--growcart-spacing-bottom) var(--growcart-spacing-left);
     width: 100%;
@@ -24,7 +24,7 @@
     &__list {
         display: flex;
         align-items: center;
-        gap: 16px;
+        gap: 12px;
         margin-bottom: 4px;
 
         ::-webkit-scrollbar {
@@ -45,14 +45,17 @@
 
         ul {
             display: flex;
+            justify-content: space-between;
             width: 100%;
             list-style: none;
             margin: 0;
             padding-left: 0;
-            gap: 16px;
+            gap: 4px;
 
             li {
                 display: inline-flex;
+                align-items: center;
+                gap: 4px;
             }
         }
     }
@@ -94,11 +97,14 @@
         align-items: center;
         width: 24px;
         height: 24px;
-        margin-right: 8px;
         border-radius: 50%;
         text-align: center;
         color: var(--growcart-icon-color);
         background-color: var(--growcart-icon-background);
+
+        svg {
+            width: 16px;
+        }
     }
 
     .availed {
@@ -134,8 +140,9 @@
     height: 8px;
     overflow: hidden;
     font-size: 0.75rem;
-    background-color: var(--growcart-progress-background);
-    border-radius: 0.25rem;
+    background-color: var(--growcart-progress-background-color);
+    border: 1px solid $white;
+    border-radius: 10px;
 
     div.progress__bar {
         display: flex;

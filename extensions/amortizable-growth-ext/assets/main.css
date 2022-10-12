@@ -483,7 +483,7 @@
     height: 24px; }
 
 .Rewards {
-  --growcart-font-size: 14px;
+  --growcart-font-size: 12px;
   --growcart-header-text-color: #ffffff;
   --growcart-header-background: #343a40;
   --growcart-spacing-top: 24px;
@@ -496,8 +496,8 @@
   --growcart-icon-background: #495057;
   --growcart-active-icon-color: #ffffff;
   --growcart-active-icon-background: #198754;
-  --growcart-progress-color: #198754;
-  --growcart-progress-background-color: #495057;
+  --growcart-progress-color: rgba(var(--color-button),var(--alpha-button-background));
+  --growcart-progress-background-color: #adb5bd;
   padding: var(--growcart-spacing-top) var(--growcart-spacing-right) var(--growcart-spacing-bottom) var(--growcart-spacing-left);
   width: 100%;
   font-size: var(--growcart-font-size);
@@ -506,7 +506,7 @@
   .Rewards__list {
     display: flex;
     align-items: center;
-    gap: 16px;
+    gap: 12px;
     margin-bottom: 4px; }
     .Rewards__list ::-webkit-scrollbar {
       height: 1px; }
@@ -518,13 +518,16 @@
       background: #555; }
     .Rewards__list ul {
       display: flex;
+      justify-content: space-between;
       width: 100%;
       list-style: none;
       margin: 0;
       padding-left: 0;
-      gap: 16px; }
+      gap: 4px; }
       .Rewards__list ul li {
-        display: inline-flex; }
+        display: inline-flex;
+        align-items: center;
+        gap: 4px; }
   .Rewards__item {
     display: flex;
     align-items: center; }
@@ -550,11 +553,12 @@
     align-items: center;
     width: 24px;
     height: 24px;
-    margin-right: 8px;
     border-radius: 50%;
     text-align: center;
     color: var(--growcart-icon-color);
     background-color: var(--growcart-icon-background); }
+    .Rewards__icon svg {
+      width: 16px; }
   .Rewards .availed .Rewards__icon {
     color: var(--growcart-active-icon-color);
     background-color: var(--growcart-active-icon-background); }
@@ -575,8 +579,9 @@
   height: 8px;
   overflow: hidden;
   font-size: 0.75rem;
-  background-color: var(--growcart-progress-background);
-  border-radius: 0.25rem; }
+  background-color: var(--growcart-progress-background-color);
+  border: 1px solid #fff;
+  border-radius: 10px; }
   .progress div.progress__bar {
     display: flex;
     flex-direction: column;
@@ -597,6 +602,8 @@
   background-color: #e9ecef; }
 
 .offcanvas-body {
+  display: flex;
+  align-items: center;
   padding: 0; }
 
 div.offcanvas-backdrop {
@@ -604,11 +611,12 @@ div.offcanvas-backdrop {
 
 .CartDetails {
   display: flex;
+  flex-grow: 1;
   flex-direction: column;
   justify-content: space-between;
   height: 100%; }
   .CartDetails__Rewards, .CartDetails__CartLines, .CartDetails__summary {
-    padding: 24px 32px; }
+    padding: 16px 32px; }
   .CartDetails__summary {
     background-color: #e9ecef; }
 
@@ -642,18 +650,19 @@ div.offcanvas-backdrop {
     display: flex;
     align-items: center;
     border: 1px solid #e5e7eb;
-    border-radius: .25rem; }
+    border-radius: .25rem;
+    line-height: 1; }
     .CartLineItem__quantity-adjust button {
-      width: 2.5rem;
-      height: 2.5rem;
+      width: 3rem;
+      height: 3rem;
       border: none;
       background-color: transparent; }
   .CartLineItem__remove {
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 3rem;
+    height: 3rem;
     border: 1px solid #e5e7eb;
     border-radius: .25rem;
     background-color: transparent; }
@@ -662,7 +671,8 @@ div.offcanvas-backdrop {
       height: 1.25rem; }
 
 .CartEmpty {
-  padding: 24px 32px; }
+  padding: 16px 32px;
+  text-align: center; }
 
 .OrderSummary {
   display: grid;
@@ -672,9 +682,12 @@ div.offcanvas-backdrop {
     display: flex;
     justify-content: space-between;
     align-items: center; }
+    .OrderSummary__item div {
+      display: inline-block; }
 
 .CartCheckoutActions {
-  display: grid; }
+  display: grid;
+  gap: 8px; }
   .CartCheckoutActions__button {
     padding: 0.75rem 1.5rem;
     text-align: center;

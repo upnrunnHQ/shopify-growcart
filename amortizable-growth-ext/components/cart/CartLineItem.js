@@ -35,7 +35,7 @@ export function CartLineItem() {
 
 
             <div className="CartLineItem__content">
-                <div className="grid gap-2">
+                <div>
                     <Heading as="h3" size="copy">
                         <a hre={url}>{product_title}</a>
                     </Heading>
