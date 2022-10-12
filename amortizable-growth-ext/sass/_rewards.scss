@@ -140,8 +140,8 @@
     height: 8px;
     overflow: hidden;
     font-size: 0.75rem;
-    background-color: var(--growcart-progress-background-color);
-    border: 1px solid $white;
+    background-color: var(--gradient-background);
+    border: 1px solid var(--growcart-progress-color);
     border-radius: 10px;
 
     div.progress__bar {
