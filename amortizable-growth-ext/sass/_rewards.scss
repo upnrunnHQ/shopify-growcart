@@ -24,6 +24,8 @@
     &__list {
         display: flex;
         align-items: center;
+        gap: 16px;
+        margin-bottom: 4px;
 
         ::-webkit-scrollbar {
             height: 1px;
@@ -42,26 +44,15 @@
         }
 
         ul {
+            display: flex;
             width: 100%;
             list-style: none;
-            margin: 0 0 4px 4px;
+            margin: 0;
             padding-left: 0;
-            overflow-x: auto;
-            overflow-y: hidden;
-            white-space: nowrap;
-            transition: all 0.2s;
-            will-change: transform;
-            user-select: none;
-            cursor: pointer;
-
-            &.active {
-                cursor: grabbing;
-                cursor: -webkit-grabbing;
-            }
+            gap: 16px;
 
             li {
-                display: inline-block;
-                margin: 0 16px 0 0;
+                display: inline-flex;
             }
         }
     }
