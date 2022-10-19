@@ -46,7 +46,7 @@ export function CartLineItem() {
                         <button
                             type="button"
                             onClick={() => lineUpdate({ id: key, quantity: 0 })}
-                            className="CartLineItem__remove"
+                            className="CartLineItem__remove button button--tertiary"
                             disabled={isLoading}
                         >
                             <IconRemove aria-hidden="true" />
@@ -63,24 +63,22 @@ export function CartLineItem() {
 
 function CartLineQuantityAdjust({ lineId, quantity }) {
     return (
-        <>
-            <div className="CartLineItem__quantity-adjust">
-                <CartLineQuantityAdjustButton
-                    adjust="decrease"
-                    aria-label="Decrease quantity"
-                    className="w-10 h-10 transition text-primary/50 hover:text-primary disabled:cursor-wait"
-                >
-                    &#8722;
-                </CartLineQuantityAdjustButton>
-                <CartLineQuantity as="div" className="px-2 text-center" />
-                <CartLineQuantityAdjustButton
-                    adjust="increase"
-                    aria-label="Increase quantity"
-                    className="w-10 h-10 transition text-primary/50 hover:text-primary disabled:cursor-wait"
-                >
-                    &#43;
-                </CartLineQuantityAdjustButton>
-            </div>
-        </>
+        <div className="CartLineItem__quantity-adjust quantity">
+            <CartLineQuantityAdjustButton
+                adjust="decrease"
+                aria-label="Decrease quantity"
+                className="quantity__button"
+            >
+                &#8722;
+            </CartLineQuantityAdjustButton>
+            <CartLineQuantity as="div" className="quantity__input" />
+            <CartLineQuantityAdjustButton
+                adjust="increase"
+                aria-label="Increase quantity"
+                className="quantity__button"
+            >
+                &#43;
+            </CartLineQuantityAdjustButton>
+        </div>
     );
 }
