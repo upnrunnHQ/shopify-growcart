@@ -312,7 +312,7 @@ mod tests {
                     value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20.00 },
                 }],
             }),
-            Some(1.00)
+            None
         );
         let handle_result = serde_json::json!(another_function(input).unwrap());
 
@@ -331,14 +331,22 @@ mod tests {
 
     #[test]
     fn test_discount_with_presentment_currency_rate() {
-        let input = input(Some(Configuration { value: 10.00 }), Some(2.00));
-        let handle_result = serde_json::json!(function(input).unwrap());
+        let input = another_input(
+            Some(DiscountConfiguration {
+                discount_requirement_type: DiscountRequirementType::Subtotal,
+                rules: vec![Rule {
+                    value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20.00 },
+                }],
+            }),
+            Some(2.00)
+        );
+        let handle_result = serde_json::json!(another_function(input).unwrap());
 
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
-                    "value": { "fixedAmount": { "amount": "20" } },
+                    "value": { "fixedAmount": { "amount": "10" } },
                 }
             ],
             "discountApplicationStrategy": "FIRST",
