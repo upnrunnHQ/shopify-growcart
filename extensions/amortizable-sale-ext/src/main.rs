@@ -54,7 +54,7 @@ impl Default for DiscountConfiguration {
         DiscountConfiguration {
             discount_requirement_type: DiscountRequirementType::Subtotal,
             rules: vec![Rule {
-                value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 5.00 },
+                value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 50.00 },
             }],
         }
     }
@@ -120,20 +120,65 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
 
 fn another_function(input: input::AnotherInput) -> Result<FunctionResult, Box<dyn std::error::Error>> {
     let config = input.configuration();
-    let cart_lines = input.cart.lines;
 
-    println!("{:#?}", config);
-    println!("{:#?}", cart_lines);
+    let mut discount_value: Value = Value::FixedAmount { amount: 0.0 };
+    let mut total_items = vec![];
 
+    match config.discount_requirement_type {
+        DiscountRequirementType::Subtotal =>
+            for rule in config.rules {
+                match rule.value {
+                    RuleValue::FixedAmount {value, amount_or_quantity} =>
+                        if input.cart.cost.subtotal_amount.amount >= amount_or_quantity {
+                            let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
+                            discount_value = Value::FixedAmount { amount: converted_value }
+                        },
+                    RuleValue::Percentage {value, amount_or_quantity} =>
+                        if input.cart.cost.subtotal_amount.amount >= amount_or_quantity {
+                            let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
+                            discount_value = Value::Percentage { value: converted_value }
+                        }
+                }
+                
+            }
+        DiscountRequirementType::Quantity =>
+            if input.cart.lines.is_empty() {
+            } else {
+                for line in input.cart.lines {
+                    total_items.push(line.quantity);
+                }
+
+                // let quantity = total_items.iter().sum();
+                
+                // for rule in config.rules {
+                //     match rule.value {
+                //         RuleValue::FixedAmount {value, amount_or_quantity} =>
+                //             if quantity >= amount_or_quantity {
+                //                 let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
+                //                 discount_value = Value::FixedAmount { amount: converted_value }
+                //             },
+                //         RuleValue::Percentage {value, amount_or_quantity} =>
+                //             if quantity >= amount_or_quantity {
+                //                 let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
+                //                 discount_value = Value::Percentage { value: converted_value }
+                //             }
+                //     }
+                    
+                // }
+            }
+    }
+
+    // println!("{:#?}", discount_value);
+
+    // let a = [1, 2, 3, 4, 5];
+    // let sum: u8 = a.iter().sum();
+    // println!("the total sum is: {}", sum);
     
-    let converted_value = convert_to_cart_currency(10.00, input.presentment_currency_rate);
     let targets = vec![Target::OrderSubtotal {
         excluded_variant_ids: vec![],
     }];
 
-    // println!("{:#?}", config);
-
-    Ok(build_result(converted_value, targets))
+    Ok(build_another_result(discount_value, targets))
 }
 
 fn convert_to_cart_currency(value: f64, presentment_currency_rate: f64) -> f64 {
@@ -149,6 +194,23 @@ fn build_result(amount: f64, targets: Vec<Target>) -> FunctionResult {
             conditions: None,
             targets,
             value: Value::FixedAmount { amount },
+        }]
+    };
+    FunctionResult {
+        discounts,
+        discount_application_strategy: DiscountApplicationStrategy::First,
+    }
+}
+
+fn build_another_result(value: Value, targets: Vec<Target>) -> FunctionResult {
+    let discounts = if targets.is_empty() {
+        vec![]
+    } else {
+        vec![Discount {
+            message: None,
+            conditions: None,
+            targets,
+            value,
         }]
     };
     FunctionResult {
@@ -226,14 +288,14 @@ mod tests {
 
     #[test]
     fn test_discount_with_no_configuration() {
-        let input = input(None, None);
-        let handle_result = serde_json::json!(function(input).unwrap());
+        let input = another_input(None, None);
+        let handle_result = serde_json::json!(another_function(input).unwrap());
 
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
-                    "value": { "fixedAmount": { "amount": "50" } },
+                    "value": { "fixedAmount": { "amount": "10" } },
                 }
             ],
             "discountApplicationStrategy": "FIRST",
@@ -349,17 +411,6 @@ mod tests {
         let handle_result = serde_json::json!(another_function(input).unwrap());
 
         println!("{:#?}", handle_result);
-
-        // let config = input.config();
-
-        // for rule in config.rules {
-        //     match rule.value {
-        //         RuleValue::FixedAmount {value, amount_or_quantity} =>
-        //             println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity),
-        //         RuleValue::Percentage {value, amount_or_quantity} =>
-        //             println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity)
-        //     }
-        // }
 
         assert_eq!(1.00, 1.00);
     }
