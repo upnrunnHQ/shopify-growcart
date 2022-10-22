@@ -355,7 +355,7 @@ mod tests {
     }
 
     #[test]
-    fn test_input_deserialization() {
+    fn test_input_deserialization_with_no_configuration() {
         let input_json = r#"
         {
             "cart": {
@@ -396,7 +396,7 @@ mod tests {
     }
 
     #[test]
-    fn test_my_deserialization() {
+    fn test_input_deserialization_with_value() {
         let input_json = r#"
         {
             "cart": {
@@ -421,39 +421,18 @@ mod tests {
                     }
                 ]
             },
-            "discountNode": { "metafield": { "value": "{\"discountRequirementType\":\"SUBTOTAL\",\"rules\":[{\"value\":{\"fixedAmount\":{\"value\":\"10\",\"amount_or_quantity\":\"5\"}}}]}" }},
+            "discountNode": { "metafield": { "value": "{\"discountRequirementType\":\"QUANTITY\",\"rules\":[]}" }},
             "presentmentCurrencyRate": "2.00"
         }
         "#;
 
         let expected_input = another_input(
             Some(DiscountConfiguration {
-                discount_requirement_type: DiscountRequirementType::Subtotal,
-                rules: vec![Rule {
-                    value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 5.00 },
-                }],
-            }),
-            Some(2.00)
-        );   
-
-        assert_eq!(expected_input, serde_json::from_str::<input::AnotherInput>(input_json).unwrap());
-    }
-
-    #[test]
-    fn test_my() {
-        let input = another_input(
-            Some(DiscountConfiguration {
-                discount_requirement_type: DiscountRequirementType::Subtotal,
-                rules: vec![Rule {
-                    value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 5.00 },
-                }],
+                discount_requirement_type: DiscountRequirementType::Quantity,
+                rules: vec![],
             }),
             Some(2.00)
         );
-        let handle_result = serde_json::json!(another_function(input).unwrap());
-
-        // println!("{:#?}", handle_result);
-
-        assert_eq!(1.00, 1.00);
+        assert_eq!(expected_input, serde_json::from_str::<input::AnotherInput>(input_json).unwrap());
     }
 }
