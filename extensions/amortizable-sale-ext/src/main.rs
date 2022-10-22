@@ -60,8 +60,8 @@ impl Default for DiscountConfiguration {
     }
 }
 
-impl input::Input {
-    pub fn config(&self) -> DiscountConfiguration {
+impl input::AnotherInput {
+    pub fn configuration(&self) -> DiscountConfiguration {
         match &self.discount_node.metafield {
             Some(input::Metafield { value }) => DiscountConfiguration::from_str(value),
             None => DiscountConfiguration::default(),
@@ -118,12 +118,16 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
     Ok(build_result(converted_value, targets))
 }
 
-fn another_function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::Error>> {
-    // let config = input.configuration();
+fn another_function(input: input::AnotherInput) -> Result<FunctionResult, Box<dyn std::error::Error>> {
+    let config = input.configuration();
+    // let cart_lines = input.cart.lines;
     let converted_value = convert_to_cart_currency(10.00, input.presentment_currency_rate);
     let targets = vec![Target::OrderSubtotal {
         excluded_variant_ids: vec![],
     }];
+
+    // println!("{:#?}", config);
+
     Ok(build_result(converted_value, targets))
 }
 
@@ -169,14 +173,43 @@ mod tests {
     fn another_input(
         config: Option<DiscountConfiguration>,
         presentment_currency_rate: Option<Decimal>,
-    ) -> input::Input {
-        input::Input {
-            discount_node: input::DiscountNode {
-                metafield: Some(input::Metafield {
-                    value: serde_json::to_string(&config.unwrap_or_default()).unwrap()
-                }),
+    ) -> input::AnotherInput {
+        let input = r#"
+        {
+            "cart": {
+                "lines": [
+                    {
+                        "quantity": 5,
+                        "merchandise": {
+                            "id": "gid://shopify/ProductVariant/0"
+                        }
+                    },
+                    {
+                        "quantity": 1,
+                        "merchandise": {
+                            "id": "gid://shopify/ProductVariant/1"
+                        }
+                    }
+                ]
             },
+            "discountNode": { "metafield": null },
+            "presentmentCurrencyRate": "2.00"
+        }
+        "#;
+
+        let default_input: input::AnotherInput = serde_json::from_str(input).unwrap();
+        let value = serde_json::to_string(&config.unwrap_or_default()).unwrap();
+
+        let discount_node = input::DiscountNode {
+            metafield: Some(input::Metafield {
+                value
+            }),
+        };
+
+        input::AnotherInput {
+            discount_node,
             presentment_currency_rate: presentment_currency_rate.unwrap_or(1.00),
+            ..default_input
         }
     }
 
@@ -251,6 +284,22 @@ mod tests {
     fn test_my_deserialization() {
         let input_json = r#"
         {
+            "cart": {
+                "lines": [
+                    {
+                        "quantity": 5,
+                        "merchandise": {
+                            "id": "gid://shopify/ProductVariant/0"
+                        }
+                    },
+                    {
+                        "quantity": 1,
+                        "merchandise": {
+                            "id": "gid://shopify/ProductVariant/1"
+                        }
+                    }
+                ]
+            },
             "discountNode": { "metafield": { "value": "{\"discountRequirementType\":\"SUBTOTAL\",\"rules\":[{\"value\":{\"fixedAmount\":{\"value\":\"10\",\"amount_or_quantity\":\"5\"}}}]}" }},
             "presentmentCurrencyRate": "2.00"
         }
@@ -266,7 +315,7 @@ mod tests {
             Some(2.00)
         );   
 
-        assert_eq!(expected_input, serde_json::from_str::<input::Input>(input_json).unwrap());
+        assert_eq!(expected_input, serde_json::from_str::<input::AnotherInput>(input_json).unwrap());
     }
 
     #[test]
@@ -280,17 +329,20 @@ mod tests {
             }),
             Some(2.00)
         );
+        let handle_result = serde_json::json!(another_function(input).unwrap());
 
-        let config = input.config();
+        // println!("{:#?}", handle_result);
 
-        for rule in config.rules {
-            match rule.value {
-                RuleValue::FixedAmount {value, amount_or_quantity} =>
-                    println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity),
-                RuleValue::Percentage {value, amount_or_quantity} =>
-                    println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity)
-            }
-        }
+        // let config = input.config();
+
+        // for rule in config.rules {
+        //     match rule.value {
+        //         RuleValue::FixedAmount {value, amount_or_quantity} =>
+        //             println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity),
+        //         RuleValue::Percentage {value, amount_or_quantity} =>
+        //             println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity)
+        //     }
+        // }
 
         assert_eq!(1.00, 1.00);
     }

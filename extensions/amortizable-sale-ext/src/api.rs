@@ -18,6 +18,16 @@ pub mod input {
         pub presentment_currency_rate: Decimal,
     }
 
+    #[serde_as]
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    #[serde(rename_all(deserialize = "camelCase"))]
+    pub struct AnotherInput {
+        pub discount_node: DiscountNode,
+        #[serde_as(as = "DisplayFromStr")]
+        pub presentment_currency_rate: Decimal,
+        pub cart: Cart,
+    }
+
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     pub struct DiscountNode {
         pub metafield: Option<Metafield>,
@@ -26,6 +36,22 @@ pub mod input {
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     pub struct Metafield {
         pub value: String,
+    }
+
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    pub struct Cart {
+        pub lines: Vec<CartLine>,
+    }
+
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    pub struct CartLine {
+        pub quantity: Int,
+        pub merchandise: Merchandise,
+    }
+
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    pub struct Merchandise {
+        pub id: Option<ID>,
     }
 }
 
