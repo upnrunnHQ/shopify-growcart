@@ -61,8 +61,47 @@ pub mod input {
     }
 }
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 use serde_with::{serde_as, skip_serializing_none, DisplayFromStr};
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct Configuration {
+    pub value: f64,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all = "camelCase")]
+pub struct DiscountConfiguration {
+    pub discount_requirement_type: DiscountRequirementType,
+    pub rules: Vec<Rule>,
+}
+
+impl DiscountConfiguration {
+    fn from_str(value: &str) -> Self {
+        serde_json::from_str(value).expect("Unable to parse configuration value from metafield")
+    }
+}
+
+impl Default for DiscountConfiguration {
+    fn default() -> Self {
+        DiscountConfiguration {
+            discount_requirement_type: DiscountRequirementType::Subtotal,
+            rules: vec![Rule {
+                value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 50.00 },
+            }],
+        }
+    }
+}
+
+impl input::Input {
+    pub fn configuration(&self) -> DiscountConfiguration {
+        match &self.discount_node.metafield {
+            Some(input::Metafield { value }) => DiscountConfiguration::from_str(value),
+            None => DiscountConfiguration::default(),
+        }
+    }
+}
 
 #[derive(Clone, Debug, Serialize)]
 #[serde(rename_all(serialize = "camelCase"))]
@@ -147,4 +186,36 @@ pub enum Condition {
 pub enum ConditionTargetType {
     OrderSubtotal,
     ProductVariant,
+}
+
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all(serialize = "SCREAMING_SNAKE_CASE", deserialize = "SCREAMING_SNAKE_CASE"))]
+pub enum DiscountRequirementType {
+    Subtotal,
+    Quantity,
+}
+
+#[skip_serializing_none]
+#[serde_as]
+#[derive(Clone, Debug, Serialize, Deserialize)]
+#[serde(rename_all(serialize = "camelCase", deserialize = "camelCase"))]
+pub enum RuleValue {
+    FixedAmount {
+        #[serde_as(as = "DisplayFromStr")]
+        value: Decimal,
+        #[serde_as(as = "DisplayFromStr")]
+        amount_or_quantity: Decimal,
+    },
+    Percentage {
+        #[serde_as(as = "DisplayFromStr")]
+        value: Decimal,
+        #[serde_as(as = "DisplayFromStr")]
+        amount_or_quantity: Decimal,
+    },
+}
+
+#[skip_serializing_none]
+#[derive(Clone, Debug, Serialize, Deserialize)]
+pub struct Rule {
+    pub value: RuleValue,
 }
