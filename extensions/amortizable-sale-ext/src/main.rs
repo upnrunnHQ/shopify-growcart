@@ -54,7 +54,7 @@ impl Default for DiscountConfiguration {
         DiscountConfiguration {
             discount_requirement_type: DiscountRequirementType::Subtotal,
             rules: vec![Rule {
-                value: RuleValue::FixedAmount { amount: 10.00 },
+                value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 5.00 },
             }],
         }
     }
@@ -83,11 +83,15 @@ pub enum DiscountRequirementType {
 pub enum RuleValue {
     FixedAmount {
         #[serde_as(as = "DisplayFromStr")]
-        amount: Decimal,
+        value: Decimal,
+        #[serde_as(as = "DisplayFromStr")]
+        amount_or_quantity: Decimal,
     },
     Percentage {
         #[serde_as(as = "DisplayFromStr")]
         value: Decimal,
+        #[serde_as(as = "DisplayFromStr")]
+        amount_or_quantity: Decimal,
     },
 }
 
@@ -247,7 +251,7 @@ mod tests {
     fn test_my_deserialization() {
         let input_json = r#"
         {
-            "discountNode": { "metafield": { "value": "{\"discountRequirementType\":\"SUBTOTAL\",\"rules\":[{\"value\":{\"fixedAmount\":{\"amount\":\"10\"}}}]}" }},
+            "discountNode": { "metafield": { "value": "{\"discountRequirementType\":\"SUBTOTAL\",\"rules\":[{\"value\":{\"fixedAmount\":{\"value\":\"10\",\"amount_or_quantity\":\"5\"}}}]}" }},
             "presentmentCurrencyRate": "2.00"
         }
         "#;
@@ -256,7 +260,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::FixedAmount { amount: 10.00 },
+                    value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 5.00 },
                 }],
             }),
             Some(2.00)
@@ -271,7 +275,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::FixedAmount { amount: 10.00 },
+                    value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 5.00 },
                 }],
             }),
             Some(2.00)
@@ -279,13 +283,13 @@ mod tests {
 
         let config = input.config();
 
-        println!("{:#?}", input);
+        println!("{:#?}", config);
 
         match config.rules[0].value {
-            RuleValue::FixedAmount {amount} =>
-                println!("Error : {}", amount),
-            RuleValue::Percentage {value} =>
-                println!("Error : {}", value)
+            RuleValue::FixedAmount {value, amount_or_quantity} =>
+                println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity),
+            RuleValue::Percentage {value, amount_or_quantity} =>
+                println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity)
         }
 
         assert_eq!(1.00, 1.00);
