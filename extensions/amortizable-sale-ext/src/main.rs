@@ -120,7 +120,12 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
 
 fn another_function(input: input::AnotherInput) -> Result<FunctionResult, Box<dyn std::error::Error>> {
     let config = input.configuration();
-    // let cart_lines = input.cart.lines;
+    let cart_lines = input.cart.lines;
+
+    println!("{:#?}", config);
+    println!("{:#?}", cart_lines);
+
+    
     let converted_value = convert_to_cart_currency(10.00, input.presentment_currency_rate);
     let targets = vec![Target::OrderSubtotal {
         excluded_variant_ids: vec![],
@@ -177,6 +182,12 @@ mod tests {
         let input = r#"
         {
             "cart": {
+                "cost": {
+                    "subtotalAmount": {
+                        "amount": 50,
+                        "currencyCode": "AED"
+                    }
+                },
                 "lines": [
                     {
                         "quantity": 5,
@@ -285,6 +296,12 @@ mod tests {
         let input_json = r#"
         {
             "cart": {
+                "cost": {
+                    "subtotalAmount": {
+                        "amount": 50,
+                        "currencyCode": "AED"
+                    }
+                },
                 "lines": [
                     {
                         "quantity": 5,
@@ -331,7 +348,7 @@ mod tests {
         );
         let handle_result = serde_json::json!(another_function(input).unwrap());
 
-        // println!("{:#?}", handle_result);
+        println!("{:#?}", handle_result);
 
         // let config = input.config();
 

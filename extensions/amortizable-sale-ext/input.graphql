@@ -1,6 +1,8 @@
 query Input {
   cart {
-    cost
+    cost {
+      subtotalAmount
+    }
     lines {
       quantity
       merchandise {

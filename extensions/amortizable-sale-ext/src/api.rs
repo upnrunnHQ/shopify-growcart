@@ -4,6 +4,7 @@ pub type Boolean = bool;
 pub type Decimal = f64;
 pub type Int = i32;
 pub type ID = String;
+pub type CurrencyCode = String;
 
 pub mod input {
     use super::*;
@@ -40,7 +41,21 @@ pub mod input {
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     pub struct Cart {
+        pub cost: Amount,
         pub lines: Vec<CartLine>,
+    }
+
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    #[serde(rename_all(deserialize = "camelCase"))]
+    pub struct Amount {
+        pub subtotal_amount: Cost,
+    }
+
+    #[derive(Clone, Debug, Deserialize, PartialEq)]
+    #[serde(rename_all(deserialize = "camelCase"))]
+    pub struct Cost {
+        pub amount: Decimal,
+        pub currency_code : CurrencyCode,
     }
 
     #[derive(Clone, Debug, Deserialize, PartialEq)]
