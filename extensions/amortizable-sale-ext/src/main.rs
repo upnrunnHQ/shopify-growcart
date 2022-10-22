@@ -290,6 +290,37 @@ mod tests {
     }
 
     #[test]
+    fn test_discount_with_multiple_rules() {
+        let input = input(
+            Some(DiscountConfiguration {
+                discount_requirement_type: DiscountRequirementType::Subtotal,
+                rules: vec![
+                    Rule {
+                        value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20.00 },
+                    },
+                    Rule {
+                        value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 50.00 },
+                    }
+                ],
+            }),
+            None
+        );
+        let handle_result = serde_json::json!(function(input).unwrap());
+
+        let expected_handle_result = serde_json::json!({
+            "discounts": [
+                {
+                    "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
+                    "value": { "fixedAmount": { "amount": "10" } },
+                }
+            ],
+            "discountApplicationStrategy": "FIRST",
+        });
+
+        assert_eq!(handle_result, expected_handle_result);
+    }
+
+    #[test]
     fn test_input_deserialization_with_no_configuration() {
         let input_json = r#"
         {
