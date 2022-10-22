@@ -283,13 +283,13 @@ mod tests {
 
         let config = input.config();
 
-        println!("{:#?}", config);
-
-        match config.rules[0].value {
-            RuleValue::FixedAmount {value, amount_or_quantity} =>
-                println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity),
-            RuleValue::Percentage {value, amount_or_quantity} =>
-                println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity)
+        for rule in config.rules {
+            match rule.value {
+                RuleValue::FixedAmount {value, amount_or_quantity} =>
+                    println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity),
+                RuleValue::Percentage {value, amount_or_quantity} =>
+                    println!("value: {}, amount_or_quantity : {}", value, amount_or_quantity)
+            }
         }
 
         assert_eq!(1.00, 1.00);

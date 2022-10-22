@@ -1,4 +1,15 @@
 query Input {
+  cart {
+    cost
+    lines {
+      quantity
+      merchandise {
+        ...on ProductVariant {
+          id
+        }
+      }
+    }
+  }
   discountNode {
     metafield(namespace: "discounts-plus", key: "volume-config") {
       value
