@@ -224,20 +224,6 @@ mod tests {
     use super::*;
 
     fn input(
-        config: Option<Configuration>,
-        presentment_currency_rate: Option<Decimal>,
-    ) -> input::Input {
-        input::Input {
-            discount_node: input::DiscountNode {
-                metafield: Some(input::Metafield {
-                    value: serde_json::to_string(&config.unwrap_or_default()).unwrap()
-                }),
-            },
-            presentment_currency_rate: presentment_currency_rate.unwrap_or(1.00),
-        }
-    }
-
-    fn another_input(
         config: Option<DiscountConfiguration>,
         presentment_currency_rate: Option<Decimal>,
     ) -> input::AnotherInput {
@@ -288,7 +274,7 @@ mod tests {
 
     #[test]
     fn test_discount_with_no_configuration() {
-        let input = another_input(None, None);
+        let input = input(None, None);
         let handle_result = serde_json::json!(another_function(input).unwrap());
 
         let expected_handle_result = serde_json::json!({
@@ -305,7 +291,7 @@ mod tests {
 
     #[test]
     fn test_discount_with_value() {
-        let input = another_input(
+        let input = input(
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
@@ -331,7 +317,7 @@ mod tests {
 
     #[test]
     fn test_discount_with_presentment_currency_rate() {
-        let input = another_input(
+        let input = input(
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
@@ -385,7 +371,7 @@ mod tests {
         }
         "#;
 
-        let expected_input = another_input(
+        let expected_input = input(
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![],
@@ -426,7 +412,7 @@ mod tests {
         }
         "#;
 
-        let expected_input = another_input(
+        let expected_input = input(
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Quantity,
                 rules: vec![],
