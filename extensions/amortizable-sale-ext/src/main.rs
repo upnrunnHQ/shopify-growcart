@@ -358,16 +358,41 @@ mod tests {
     fn test_input_deserialization() {
         let input_json = r#"
         {
-            "discountNode": { "metafield": { "value": "{\"value\":10.0}" }},
-            "presentmentCurrencyRate": "2.00"
+            "cart": {
+                "cost": {
+                    "subtotalAmount": {
+                        "amount": 50,
+                        "currencyCode": "AED"
+                    }
+                },
+                "lines": [
+                    {
+                        "quantity": 5,
+                        "merchandise": {
+                            "id": "gid://shopify/ProductVariant/0"
+                        }
+                    },
+                    {
+                        "quantity": 1,
+                        "merchandise": {
+                            "id": "gid://shopify/ProductVariant/1"
+                        }
+                    }
+                ]
+            },
+            "discountNode": { "metafield": { "value": "{\"discountRequirementType\":\"SUBTOTAL\",\"rules\":[]}" }},
+            "presentmentCurrencyRate": "1.00"
         }
         "#;
 
-        let expected_input = input(
-            Some(Configuration { value: 10.00 }),
-            Some(2.00)
+        let expected_input = another_input(
+            Some(DiscountConfiguration {
+                discount_requirement_type: DiscountRequirementType::Subtotal,
+                rules: vec![],
+            }),
+            None
         );
-        assert_eq!(expected_input, serde_json::from_str::<input::Input>(input_json).unwrap());
+        assert_eq!(expected_input, serde_json::from_str::<input::AnotherInput>(input_json).unwrap());
     }
 
     #[test]
