@@ -17,15 +17,6 @@ pub mod input {
         pub discount_node: DiscountNode,
         #[serde_as(as = "DisplayFromStr")]
         pub presentment_currency_rate: Decimal,
-    }
-
-    #[serde_as]
-    #[derive(Clone, Debug, Deserialize, PartialEq)]
-    #[serde(rename_all(deserialize = "camelCase"))]
-    pub struct AnotherInput {
-        pub discount_node: DiscountNode,
-        #[serde_as(as = "DisplayFromStr")]
-        pub presentment_currency_rate: Decimal,
         pub cart: Cart,
     }
 

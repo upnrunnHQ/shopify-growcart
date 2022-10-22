@@ -10,31 +10,6 @@ pub struct Configuration {
     pub value: f64,
 }
 
-impl Configuration {
-    const DEFAULT_VALUE: f64 = 50.00;
-
-    fn from_str(value: &str) -> Self {
-        serde_json::from_str(value).expect("Unable to parse configuration value from metafield")
-    }
-}
-
-impl Default for Configuration {
-    fn default() -> Self {
-        Configuration {
-            value: Self::DEFAULT_VALUE,
-        }
-    }
-}
-
-impl input::Input {
-    pub fn configuration(&self) -> Configuration {
-        match &self.discount_node.metafield {
-            Some(input::Metafield { value }) => Configuration::from_str(value),
-            None => Configuration::default(),
-        }
-    }
-}
-
 #[derive(Clone, Debug, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase")]
 pub struct DiscountConfiguration {
@@ -60,7 +35,7 @@ impl Default for DiscountConfiguration {
     }
 }
 
-impl input::AnotherInput {
+impl input::Input {
     pub fn configuration(&self) -> DiscountConfiguration {
         match &self.discount_node.metafield {
             Some(input::Metafield { value }) => DiscountConfiguration::from_str(value),
@@ -110,15 +85,6 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 }
 
 fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::Error>> {
-    let config = input.configuration();
-    let converted_value = convert_to_cart_currency(config.value, input.presentment_currency_rate);
-    let targets = vec![Target::OrderSubtotal {
-        excluded_variant_ids: vec![],
-    }];
-    Ok(build_result(converted_value, targets))
-}
-
-fn another_function(input: input::AnotherInput) -> Result<FunctionResult, Box<dyn std::error::Error>> {
     let config = input.configuration();
 
     let mut discount_value: Value = Value::FixedAmount { amount: 0.0 };
@@ -178,31 +144,14 @@ fn another_function(input: input::AnotherInput) -> Result<FunctionResult, Box<dy
         excluded_variant_ids: vec![],
     }];
 
-    Ok(build_another_result(discount_value, targets))
+    Ok(build_result(discount_value, targets))
 }
 
 fn convert_to_cart_currency(value: f64, presentment_currency_rate: f64) -> f64 {
     value * presentment_currency_rate
 }
 
-fn build_result(amount: f64, targets: Vec<Target>) -> FunctionResult {
-    let discounts = if targets.is_empty() {
-        vec![]
-    } else {
-        vec![Discount {
-            message: None,
-            conditions: None,
-            targets,
-            value: Value::FixedAmount { amount },
-        }]
-    };
-    FunctionResult {
-        discounts,
-        discount_application_strategy: DiscountApplicationStrategy::First,
-    }
-}
-
-fn build_another_result(value: Value, targets: Vec<Target>) -> FunctionResult {
+fn build_result(value: Value, targets: Vec<Target>) -> FunctionResult {
     let discounts = if targets.is_empty() {
         vec![]
     } else {
@@ -226,7 +175,7 @@ mod tests {
     fn input(
         config: Option<DiscountConfiguration>,
         presentment_currency_rate: Option<Decimal>,
-    ) -> input::AnotherInput {
+    ) -> input::Input {
         let input = r#"
         {
             "cart": {
@@ -256,7 +205,7 @@ mod tests {
         }
         "#;
 
-        let default_input: input::AnotherInput = serde_json::from_str(input).unwrap();
+        let default_input: input::Input = serde_json::from_str(input).unwrap();
         let value = serde_json::to_string(&config.unwrap_or_default()).unwrap();
 
         let discount_node = input::DiscountNode {
@@ -265,7 +214,7 @@ mod tests {
             }),
         };
 
-        input::AnotherInput {
+        input::Input {
             discount_node,
             presentment_currency_rate: presentment_currency_rate.unwrap_or(1.00),
             ..default_input
@@ -275,7 +224,7 @@ mod tests {
     #[test]
     fn test_discount_with_no_configuration() {
         let input = input(None, None);
-        let handle_result = serde_json::json!(another_function(input).unwrap());
+        let handle_result = serde_json::json!(function(input).unwrap());
 
         let expected_handle_result = serde_json::json!({
             "discounts": [
@@ -300,7 +249,7 @@ mod tests {
             }),
             None
         );
-        let handle_result = serde_json::json!(another_function(input).unwrap());
+        let handle_result = serde_json::json!(function(input).unwrap());
 
         let expected_handle_result = serde_json::json!({
             "discounts": [
@@ -326,7 +275,7 @@ mod tests {
             }),
             Some(2.00)
         );
-        let handle_result = serde_json::json!(another_function(input).unwrap());
+        let handle_result = serde_json::json!(function(input).unwrap());
 
         let expected_handle_result = serde_json::json!({
             "discounts": [
@@ -378,7 +327,7 @@ mod tests {
             }),
             None
         );
-        assert_eq!(expected_input, serde_json::from_str::<input::AnotherInput>(input_json).unwrap());
+        assert_eq!(expected_input, serde_json::from_str::<input::Input>(input_json).unwrap());
     }
 
     #[test]
@@ -419,6 +368,6 @@ mod tests {
             }),
             Some(2.00)
         );
-        assert_eq!(expected_input, serde_json::from_str::<input::AnotherInput>(input_json).unwrap());
+        assert_eq!(expected_input, serde_json::from_str::<input::Input>(input_json).unwrap());
     }
 }
