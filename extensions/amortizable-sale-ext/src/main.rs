@@ -266,7 +266,7 @@ mod tests {
                 ]
             },
             "discountNode": { "metafield": null },
-            "presentmentCurrencyRate": "2.00"
+            "presentmentCurrencyRate": "1.00"
         }
         "#;
 
@@ -305,18 +305,27 @@ mod tests {
 
     #[test]
     fn test_discount_with_value() {
-        let input = input(Some(Configuration { value: 12.34 }), None);
-        let handle_result = serde_json::json!(function(input).unwrap());
+        let input = another_input(
+            Some(DiscountConfiguration {
+                discount_requirement_type: DiscountRequirementType::Subtotal,
+                rules: vec![Rule {
+                    value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20.00 },
+                }],
+            }),
+            Some(1.00)
+        );
+        let handle_result = serde_json::json!(another_function(input).unwrap());
 
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
-                    "value": { "fixedAmount": { "amount": "12.34" } },
+                    "value": { "fixedAmount": { "amount": "5" } },
                 }
             ],
             "discountApplicationStrategy": "FIRST",
         });
+
         assert_eq!(handle_result, expected_handle_result);
     }
 
@@ -410,7 +419,7 @@ mod tests {
         );
         let handle_result = serde_json::json!(another_function(input).unwrap());
 
-        println!("{:#?}", handle_result);
+        // println!("{:#?}", handle_result);
 
         assert_eq!(1.00, 1.00);
     }
