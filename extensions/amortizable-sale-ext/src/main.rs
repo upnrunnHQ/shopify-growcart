@@ -253,7 +253,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20.00 },
+                    value: RuleValue::Percentage { value: 5.00, amount_or_quantity: 20.00 },
                 }],
             }),
             Some(2.00)
@@ -264,7 +264,7 @@ mod tests {
             "discounts": [
                 {
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
-                    "value": { "fixedAmount": { "amount": "10" } },
+                    "value": { "percentage": { "value": "10" } },
                 }
             ],
             "discountApplicationStrategy": "FIRST",
