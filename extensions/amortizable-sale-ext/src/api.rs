@@ -45,7 +45,7 @@ pub mod input {
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     #[serde(rename_all(deserialize = "camelCase"))]
     pub struct Cost {
-        pub amount: Int,
+        pub amount: Decimal,
         pub currency_code : CurrencyCode,
     }
 
@@ -88,7 +88,7 @@ impl Default for DiscountConfiguration {
         DiscountConfiguration {
             discount_requirement_type: DiscountRequirementType::Subtotal,
             rules: vec![Rule {
-                value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 50 },
+                value: RuleValue::FixedAmount { value: 10.00, subtotal: 50.00, quantity: 0 },
             }],
         }
     }
@@ -204,13 +204,17 @@ pub enum RuleValue {
         #[serde_as(as = "DisplayFromStr")]
         value: Decimal,
         #[serde_as(as = "DisplayFromStr")]
-        amount_or_quantity: Int,
+        subtotal: Decimal,
+        #[serde_as(as = "DisplayFromStr")]
+        quantity: Int,
     },
     Percentage {
         #[serde_as(as = "DisplayFromStr")]
         value: Decimal,
         #[serde_as(as = "DisplayFromStr")]
-        amount_or_quantity: Int,
+        subtotal: Decimal,
+        #[serde_as(as = "DisplayFromStr")]
+        quantity: Int,
     },
 }
 
