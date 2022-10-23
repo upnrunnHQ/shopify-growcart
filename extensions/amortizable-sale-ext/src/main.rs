@@ -15,7 +15,6 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
     let config = input.configuration();
 
     let mut discount_value: Value = Value::FixedAmount { amount: 0.0 };
-    let mut total_items = vec![];
 
     match config.discount_requirement_type {
         DiscountRequirementType::Subtotal =>
@@ -37,35 +36,30 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
         DiscountRequirementType::Quantity =>
             if input.cart.lines.is_empty() {
             } else {
+                let mut quantity: Int = 0;
+
                 for line in input.cart.lines {
-                    total_items.push(line.quantity);
+                    quantity += line.quantity;
+                }
+                
+                for rule in config.rules {
+                    match rule.value {
+                        RuleValue::FixedAmount {value, amount_or_quantity} =>
+                            if quantity >= amount_or_quantity {
+                                let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
+                                discount_value = Value::FixedAmount { amount: converted_value }
+                            },
+                        RuleValue::Percentage {value, amount_or_quantity} =>
+                            if quantity >= amount_or_quantity {
+                                let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
+                                discount_value = Value::Percentage { value: converted_value }
+                            }
+                    }
                 }
 
-                // let quantity = total_items.iter().sum();
-                
-                // for rule in config.rules {
-                //     match rule.value {
-                //         RuleValue::FixedAmount {value, amount_or_quantity} =>
-                //             if quantity >= amount_or_quantity {
-                //                 let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
-                //                 discount_value = Value::FixedAmount { amount: converted_value }
-                //             },
-                //         RuleValue::Percentage {value, amount_or_quantity} =>
-                //             if quantity >= amount_or_quantity {
-                //                 let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
-                //                 discount_value = Value::Percentage { value: converted_value }
-                //             }
-                //     }
-                    
-                // }
+                println!("{:#?}", discount_value);
             }
     }
-
-    // println!("{:#?}", discount_value);
-
-    // let a = [1, 2, 3, 4, 5];
-    // let sum: u8 = a.iter().sum();
-    // println!("the total sum is: {}", sum);
     
     let targets = vec![Target::OrderSubtotal {
         excluded_variant_ids: vec![],
@@ -171,7 +165,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20.00 },
+                    value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20 },
                 }],
             }),
             None
@@ -197,7 +191,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20.00 },
+                    value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20 },
                 }],
             }),
             Some(2.00)
@@ -223,10 +217,10 @@ mod tests {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![
                     Rule {
-                        value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20.00 },
+                        value: RuleValue::FixedAmount { value: 5.00, amount_or_quantity: 20 },
                     },
                     Rule {
-                        value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 50.00 },
+                        value: RuleValue::FixedAmount { value: 10.00, amount_or_quantity: 50 },
                     }
                 ],
             }),
@@ -253,7 +247,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::Percentage { value: 5.00, amount_or_quantity: 20.00 },
+                    value: RuleValue::Percentage { value: 5.00, amount_or_quantity: 20 },
                 }],
             }),
             Some(2.00)
@@ -265,6 +259,31 @@ mod tests {
                 {
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
                     "value": { "percentage": { "value": "10" } },
+                }
+            ],
+            "discountApplicationStrategy": "FIRST",
+        });
+        assert_eq!(handle_result, expected_handle_result);
+    }
+
+    #[test]
+    fn test_discount_with_quantity() {
+        let input = input(
+            Some(DiscountConfiguration {
+                discount_requirement_type: DiscountRequirementType::Quantity,
+                rules: vec![Rule {
+                    value: RuleValue::Percentage { value: 5.00, amount_or_quantity: 5 },
+                }],
+            }),
+            Some(1.00)
+        );
+        let handle_result = serde_json::json!(function(input).unwrap());
+
+        let expected_handle_result = serde_json::json!({
+            "discounts": [
+                {
+                    "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
+                    "value": { "percentage": { "value": "5" } },
                 }
             ],
             "discountApplicationStrategy": "FIRST",
