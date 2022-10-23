@@ -297,7 +297,7 @@ mod tests {
             "cart": {
                 "cost": {
                     "subtotalAmount": {
-                        "amount": 50,
+                        "amount": "50",
                         "currencyCode": "AED"
                     }
                 },
@@ -369,6 +369,7 @@ mod tests {
             }),
             Some(2.00)
         );
+            
         assert_eq!(expected_input, serde_json::from_str::<input::Input>(input_json).unwrap());
     }
 }
