@@ -1,7 +1,10 @@
 query Input {
   cart {
     cost {
-      subtotalAmount
+      subtotalAmount {
+        amount
+        currencyCode
+      }
     }
     lines {
       quantity
