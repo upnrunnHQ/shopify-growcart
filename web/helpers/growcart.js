@@ -36,3 +36,33 @@ export async function parseSettingsBody(req) {
 export async function formatSettingsResponse(req, res, rawCodeData) {
     return rawCodeData;
 }
+
+export function prepareDiscountRules(discountRequirementType, rulesList) {
+    return rulesList.map(item => {
+        const discount = "SUBTOTAL" === discountRequirementType ? {
+            value: item.value,
+            subtotal: item.amountOrQuantity,
+            quantity: "0"
+        } : {
+            value: item.value,
+            subtotal: "0",
+            quantity: item.amountOrQuantity
+        };
+
+        if (item.type.includes("percentage")) {
+            return {
+                value: {
+                    percentage: discount
+                }
+            };
+        } else {
+            return {
+                value: {
+                    fixedAmount: discount
+                }
+            };
+        }
+
+        return item;
+    });
+}
