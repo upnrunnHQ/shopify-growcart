@@ -42,9 +42,11 @@ pub mod input {
         pub subtotal_amount: Cost,
     }
 
+    #[serde_as]
     #[derive(Clone, Debug, Deserialize, PartialEq)]
     #[serde(rename_all(deserialize = "camelCase"))]
     pub struct Cost {
+        #[serde_as(as = "DisplayFromStr")]
         pub amount: Decimal,
         pub currency_code : CurrencyCode,
     }
