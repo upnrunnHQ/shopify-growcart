@@ -102,8 +102,14 @@ export default function applyGrowCartApiEndpoints(app) {
           ],
         };
 
-        const data = await runDiscountMutation(req, res, { discount: { ...discount, title: "Test" } }, CREATE_AUTOMATIC_MUTATION);
-        console.log(data);
+        const session = await Shopify.Utils.loadCurrentSession(
+          req,
+          res,
+          app.get("use-online-tokens")
+        );
+
+        // const data = await runDiscountMutation({ discount: { ...discount, title: "Test" } }, CREATE_AUTOMATIC_MUTATION, session);
+        // console.log(data);
 
         await GrowCartDB.update(req.params.id, {
           ...parsedSettingsBody,
