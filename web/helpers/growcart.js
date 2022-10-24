@@ -25,10 +25,9 @@ export async function getShopUrlFromSession(req, res) {
     return `https://${session.shop}`;
 }
 
-export async function parseSettingsBody(req) {
+export function parseSettingsBody(req) {
     return {
         minimumRequiremenType: req.body.minimumRequiremenType,
-        discountType: req.body.discountType,
         discounts: JSON.stringify(req.body.discounts),
     };
 }
@@ -39,7 +38,7 @@ export async function formatSettingsResponse(req, res, rawCodeData) {
 
 export function prepareDiscountRules(discountRequirementType, rulesList) {
     return rulesList.map(item => {
-        const discount = "SUBTOTAL" === discountRequirementType ? {
+        const discount = discountRequirementType.includes("SUBTOTAL") ? {
             value: item.value,
             subtotal: item.amountOrQuantity,
             quantity: "0"

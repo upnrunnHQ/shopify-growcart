@@ -30,15 +30,35 @@ export default function applyGrowCartApiEndpoints(app) {
 
             const discount = {
                 functionId: "01GETZ4P8B7GWRMVSA64RM4MHZ",
-                // combinesWith: form.combinesWith,
                 startsAt: new Date(),
-                // endsAt: form.endDate,
                 metafields: [
                     {
                         namespace: "discounts-plus",
                         key: "volume-config",
                         type: "json",
-                        value: JSON.stringify({ value: 12.34 }),
+                        value: JSON.stringify({
+                            discountRequirementType: "SUBTOTAL",
+                            rules: [
+                              {
+                                value: {
+                                  percentage: {
+                                    value: "10",
+                                    subtotal: "100",
+                                    quantity: "0"
+                                  }
+                                }
+                              },
+                              {
+                                value: {
+                                  percentage: {
+                                    value: "20",
+                                    subtotal: "200",
+                                    quantity: "0"
+                                  }
+                                }
+                              }
+                            ]
+                          }),
                     },
                 ],
             };
@@ -54,14 +74,14 @@ export default function applyGrowCartApiEndpoints(app) {
                 session?.accessToken
             );
         
-            const data = await client.query({
-                data: {
-                    query: CREATE_AUTOMATIC_MUTATION,
-                    variables: { discount: { ...discount, title: "Test" } },
-                },
-            });
+            // const data = await client.query({
+            //     data: {
+            //         query: CREATE_AUTOMATIC_MUTATION,
+            //         variables: { discount: { ...discount, title: "Test" } },
+            //     },
+            // });
 
-            console.log(JSON.stringify(data.body));
+            // console.log(JSON.stringify(data.body));
 
             const response = await formatSettingsResponse(req, res, rawCodeData);
 
@@ -74,7 +94,7 @@ export default function applyGrowCartApiEndpoints(app) {
     app.post("/api/settings", async (req, res) => {
         try {
             const id = await GrowCartDB.create({
-                ...(await parseSettingsBody(req)),
+                ...(parseSettingsBody(req)),
                 shopDomain: await getShopUrlFromSession(req, res),
             });
             const response = await formatSettingsResponse(req, res, [
@@ -97,10 +117,10 @@ export default function applyGrowCartApiEndpoints(app) {
 
     app.post("/api/settings/:id", async (req, res) => {
         const settings = await getSettingsOr404(req, res);
-
         if (settings) {
             try {
-                await GrowCartDB.update(req.params.id, await parseSettingsBody(req));
+                const parseSettingsBody = parseSettingsBody(req);
+                await GrowCartDB.update(req.params.id, parseSettingsBody);
                 const response = await formatSettingsResponse(req, res, [
                     await GrowCartDB.readById(req.params.id),
                 ]);
