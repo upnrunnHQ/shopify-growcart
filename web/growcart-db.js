@@ -133,6 +133,11 @@ export const GrowCartDB = {
         return rows.length === 1;
     },
 
+    updateTable: async function () {
+        // this.__query(`ALTER TABLE ${this.cartSettingsTableName} DROP COLUMN discountType`);
+        // this.__query(`ALTER TABLE ${this.cartSettingsTableName} ADD discountId VARCHAR(255)`);
+    },
+
     /* Initializes the connection with the app's sqlite3 database */
     init: async function () {
 

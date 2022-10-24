@@ -28,6 +28,7 @@ const sessionDb = new Shopify.Session.SQLiteSessionStorage(dbFile);
 // Initialize SQLite DB
 GrowCartDB.db = sessionDb.db;
 GrowCartDB.init();
+GrowCartDB.updateTable();
 
 Shopify.Context.initialize({
   API_KEY: process.env.SHOPIFY_API_KEY,

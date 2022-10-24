@@ -66,24 +66,24 @@ export function prepareDiscountRules(discountRequirementType, rulesList) {
     });
 }
 
-const runDiscountMutation = async (req, res, mutation) => {
+export async function runDiscountMutation(req, res, variables, mutation) {
     const session = await Shopify.Utils.loadCurrentSession(
-      req,
-      res,
-      app.get("use-online-tokens")
+        req,
+        res,
+        app.get("use-online-tokens")
     );
 
     const client = new Shopify.Clients.Graphql(
-      session?.shop,
-      session?.accessToken
+        session?.shop,
+        session?.accessToken
     );
 
     const data = await client.query({
-      data: {
-        query: mutation,
-        variables: req.body,
-      },
+        data: {
+            query: mutation,
+            variables,
+        },
     });
 
-    res.send(data.body);
-  };
+    return data.body;
+};

@@ -6,6 +6,7 @@ import {
   parseSettingsBody,
   prepareDiscountRules,
   formatSettingsResponse,
+  runDiscountMutation
 } from "../helpers/growcart.js";
 
 const CREATE_AUTOMATIC_MUTATION = `
@@ -43,61 +44,6 @@ export default function applyGrowCartApiEndpoints(app) {
       const rawCodeData = await GrowCartDB.read(
         await getShopUrlFromSession(req, res)
       );
-
-      const discount = {
-        functionId: "01GETZ4P8B7GWRMVSA64RM4MHZ",
-        startsAt: new Date(),
-        metafields: [
-          {
-            namespace: "discounts-plus",
-            key: "volume-config",
-            type: "json",
-            value: JSON.stringify({
-              discountRequirementType: "SUBTOTAL",
-              rules: [
-                {
-                  value: {
-                    percentage: {
-                      value: "10",
-                      subtotal: "100",
-                      quantity: "0"
-                    }
-                  }
-                },
-                {
-                  value: {
-                    percentage: {
-                      value: "20",
-                      subtotal: "200",
-                      quantity: "0"
-                    }
-                  }
-                }
-              ]
-            }),
-          },
-        ],
-      };
-
-      const session = await Shopify.Utils.loadCurrentSession(
-        req,
-        res,
-        app.get("use-online-tokens")
-      );
-
-      const client = new Shopify.Clients.Graphql(
-        session?.shop,
-        session?.accessToken
-      );
-
-      // const data = await client.query({
-      //     data: {
-      //         query: CREATE_AUTOMATIC_MUTATION,
-      //         variables: { discount: { ...discount, title: "Test" } },
-      //     },
-      // });
-
-      // console.log(JSON.stringify(data.body));
 
       const response = await formatSettingsResponse(req, res, rawCodeData);
 
@@ -137,9 +83,28 @@ export default function applyGrowCartApiEndpoints(app) {
     if (settings) {
       try {
         const parsedSettingsBody = await parseSettingsBody(req);
-        const minimumRequiremenType = parsedSettingsBody.minimumRequiremenType;
+        const discountRequirementType = parsedSettingsBody.minimumRequiremenType;
         const discounts = JSON.parse(parsedSettingsBody.discounts);
-        const preparedDiscountRules = prepareDiscountRules(minimumRequiremenType, discounts);
+        const preparedDiscountRules = prepareDiscountRules(discountRequirementType, discounts);
+        const discount = {
+          functionId: "01GETZ4P8B7GWRMVSA64RM4MHZ",
+          startsAt: new Date(),
+          metafields: [
+            {
+              namespace: "discounts-plus",
+              key: "volume-config",
+              type: "json",
+              value: JSON.stringify({
+                discountRequirementType: discountRequirementType[0],
+                rules: preparedDiscountRules
+              }),
+            },
+          ],
+        };
+
+        const data = await runDiscountMutation(req, res, { discount: { ...discount, title: "Test" } }, CREATE_AUTOMATIC_MUTATION);
+        console.log(data);
+
         await GrowCartDB.update(req.params.id, {
           ...parsedSettingsBody,
           discountId: [""],
