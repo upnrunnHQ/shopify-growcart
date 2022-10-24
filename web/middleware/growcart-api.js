@@ -140,9 +140,10 @@ export default function applyGrowCartApiEndpoints(app) {
         const minimumRequiremenType = parsedSettingsBody.minimumRequiremenType;
         const discounts = JSON.parse(parsedSettingsBody.discounts);
         const preparedDiscountRules = prepareDiscountRules(minimumRequiremenType, discounts);
-        console.log(parsedSettingsBody);
-
-        await GrowCartDB.update(req.params.id, parsedSettingsBody);
+        await GrowCartDB.update(req.params.id, {
+          ...parsedSettingsBody,
+          discountId: [""],
+        });
         const response = await formatSettingsResponse(req, res, [
           await GrowCartDB.readById(req.params.id),
         ]);

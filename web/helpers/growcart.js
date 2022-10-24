@@ -28,7 +28,6 @@ export async function getShopUrlFromSession(req, res) {
 export async function parseSettingsBody(req) {
     return {
         minimumRequiremenType: req.body.minimumRequiremenType,
-        discountType: req.body.discountType,
         discounts: JSON.stringify(req.body.discounts),
     };
 }
