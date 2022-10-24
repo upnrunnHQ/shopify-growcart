@@ -22,6 +22,21 @@ const CREATE_AUTOMATIC_MUTATION = `
   }
 `;
 
+const UPDATE_AUTOMATIC_MUTATION = `
+  mutation UpdateDiscount($id: ID!, $discount: DiscountAutomaticAppInput!) {
+    discountUpdate: discountAutomaticAppUpdate(
+      id: $id
+      automaticAppDiscount: $discount
+    ) {
+      userErrors {
+        code
+        message
+        field
+      }
+    }
+  }
+`;
+
 export default function applyGrowCartApiEndpoints(app) {
   app.get("/api/settings", async (req, res) => {
     try {
