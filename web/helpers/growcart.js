@@ -66,3 +66,25 @@ export function prepareDiscountRules(discountRequirementType, rulesList) {
         return item;
     });
 }
+
+const runDiscountMutation = async (req, res, mutation) => {
+    const session = await Shopify.Utils.loadCurrentSession(
+      req,
+      res,
+      app.get("use-online-tokens")
+    );
+
+    const client = new Shopify.Clients.Graphql(
+      session?.shop,
+      session?.accessToken
+    );
+
+    const data = await client.query({
+      data: {
+        query: mutation,
+        variables: req.body,
+      },
+    });
+
+    res.send(data.body);
+  };
