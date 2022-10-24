@@ -11,13 +11,12 @@ export const GrowCartDB = {
     create: async function ({
         shopDomain,
         minimumRequiremenType,
-        discountType,
         discounts,
     }) {
         await this.ready;
         const query = `
       INSERT INTO ${this.cartSettingsTableName}
-      (shopDomain, minimumRequiremenType, discountType, discounts)
+      (shopDomain, minimumRequiremenType, discountId, discounts)
       VALUES (?, ?, ?, ?)
       RETURNING id;
     `;
@@ -25,7 +24,7 @@ export const GrowCartDB = {
         const rawResults = await this.__query(query, [
             shopDomain,
             minimumRequiremenType,
-            discountType,
+            [""],
             discounts,
         ]);
 
@@ -36,7 +35,7 @@ export const GrowCartDB = {
         id,
         {
             minimumRequiremenType,
-            discountType,
+            discountId,
             discounts,
         }
     ) {
@@ -46,7 +45,7 @@ export const GrowCartDB = {
       UPDATE ${this.cartSettingsTableName}
       SET
         minimumRequiremenType = ?,
-        discountType = ?,
+        discountId = ?,
         discounts = ?
       WHERE
         id = ?;
@@ -54,7 +53,7 @@ export const GrowCartDB = {
 
         await this.__query(query, [
             minimumRequiremenType,
-            discountType,
+            discountId,
             discounts,
             id,
         ]);
@@ -83,7 +82,7 @@ export const GrowCartDB = {
             const settings = {
                 shopDomain,
                 minimumRequiremenType: ['SUBTOTAL'],
-                discountType: ["percentage"],
+                discountId: [""],
                 discounts: [],
             }
             this.create(settings);
@@ -151,7 +150,7 @@ export const GrowCartDB = {
           id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
           shopDomain VARCHAR(511) NOT NULL,
           minimumRequiremenType VARCHAR(255) NOT NULL,
-          discountType VARCHAR(255) NOT NULL,
+          discountId VARCHAR(255) NOT NULL,
           discounts TEXT NOT NULL,
           createdAt DATETIME NOT NULL DEFAULT (datetime(CURRENT_TIMESTAMP, 'localtime'))
         )
