@@ -52,7 +52,15 @@ div.offcanvas-backdrop {
     }
 
     &__summary {
+        position: relative;
         background-color: $gray-200;
+    }
+
+    .brandLogo {
+        width: 20px;
+        position: absolute;
+        right: 10px;
+        bottom: 10px;
     }
 }
 

@@ -4,16 +4,17 @@ import {
     CartLineProvider,
 } from '@shopify/hydrogen';
 import { useCart } from 'hooks';
-import { 
+import {
     Rewards,
-    CartLineItem, 
-    CartEmpty, 
-    OrderSummary, 
-    CartCheckoutActions 
+    CartLineItem,
+    CartEmpty,
+    OrderSummary,
+    CartCheckoutActions
 } from 'components';
+import brandLogo from './../../img/brand-logo.png';
 
 export function CartDetails() {
-    const {cart} = useCart();
+    const { cart } = useCart();
     const scrollRef = useRef(null);
     const { y } = useScroll(scrollRef);
 
@@ -41,6 +42,9 @@ export function CartDetails() {
             <section className='CartDetails__summary'>
                 <OrderSummary />
                 <CartCheckoutActions />
+                <a href="https://glice.co/business/growcart" title="Powered by Glice" target="_blank">
+                    <img className='brandLogo' src={brandLogo} />
+                </a>
             </section>
         </div>
     );

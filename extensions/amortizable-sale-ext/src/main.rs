@@ -101,7 +101,7 @@ mod tests {
             "cart": {
                 "cost": {
                     "subtotalAmount": {
-                        "amount": 50,
+                        "amount": "50",
                         "currencyCode": "AED"
                     }
                 },
@@ -338,7 +338,7 @@ mod tests {
             "cart": {
                 "cost": {
                     "subtotalAmount": {
-                        "amount": 50,
+                        "amount": "50",
                         "currencyCode": "AED"
                     }
                 },

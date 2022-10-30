@@ -18,7 +18,7 @@ import {
 import { useForm, useField } from "@shopify/react-form";
 import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid';
-import { useAppMutation } from "../hooks";
+import { useAppMutation, useAuthenticatedFetch } from "../hooks";
 
 const staticDiscounts = [
     {
@@ -43,16 +43,21 @@ const staticDiscounts = [
 
 export function RewardForm(props) {
     const queryClient = useQueryClient();
+    const authenticatedFetch = useAuthenticatedFetch();
     const mutation = useAppMutation({
         url: `/api/settings/${props.id}`,
         fetchInit: {
             method: "POST",
-            headers: { "Content-Type": "application/json" }
+            headers: { "Content-Type": "text/html" }
         },
         reactMutationOptions: {
-            onSuccess: () => {
+            onSuccess: (data) => {
+                console.log(data);
                 // queryClient.invalidateQueries('/api/settings');
-            }
+            },
+            onError: (error, variables, context) => {
+                console.log(error)
+            },
         }
     });
 
@@ -79,10 +84,27 @@ export function RewardForm(props) {
         },
         async onSubmit(fieldValues) {
             try {
-                await mutation.mutateAsync({
-                    ...props,
-                    ...fieldValues
-                })
+                let response = await authenticatedFetch(`/api/settings/${props.id}`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        ...props,
+                        ...fieldValues
+                    }),
+                });
+
+    
+
+                console.log(await response.json());
+                // await fetch(`/api/settings/${props.id}`, {
+                //     method: "POST"
+                // })
+                //     .then((response) => response.json())
+                //     .then((data) => console.log(data));
+                // await mutation.mutateAsync({
+                //     ...props,
+                //     ...fieldValues
+                // })
                 makeClean();
             } catch (remoteErrors) {
                 return { status: 'fail', errors: remoteErrors };
@@ -164,7 +186,7 @@ export function RewardForm(props) {
                                         })}
                                     />
                                     <TextField
-                                        label={minimumRequiremenType.value.includes("QUANTITY") ? "Minimum cart quantity": "Minimum cart amount"}
+                                        label={minimumRequiremenType.value.includes("QUANTITY") ? "Minimum cart quantity" : "Minimum cart amount"}
                                         type="number"
                                         value={discount.amountOrQuantity}
                                         onChange={(amountOrQuantity) => updateDiscounts({

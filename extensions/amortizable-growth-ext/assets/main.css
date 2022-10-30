@@ -618,7 +618,13 @@ div.offcanvas-backdrop {
   .CartDetails__Rewards, .CartDetails__CartLines, .CartDetails__summary {
     padding: 16px 32px; }
   .CartDetails__summary {
+    position: relative;
     background-color: #e9ecef; }
+  .CartDetails .brandLogo {
+    width: 20px;
+    position: absolute;
+    right: 10px;
+    bottom: 10px; }
 
 .CartLines {
   list-style: none;

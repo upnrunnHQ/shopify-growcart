@@ -29,6 +29,7 @@
     "@svgr/webpack": "^6.3.1",
     "babel-loader": "^8.2.5",
     "css-loader": "^6.7.1",
+    "file-loader": "^6.2.0",
     "mini-css-extract-plugin": "^2.6.1",
     "node-sass": "^7.0.1",
     "sass-loader": "^13.0.2",
