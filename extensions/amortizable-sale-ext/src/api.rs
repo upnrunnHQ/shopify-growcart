@@ -90,7 +90,7 @@ impl Default for DiscountConfiguration {
         DiscountConfiguration {
             discount_requirement_type: DiscountRequirementType::Subtotal,
             rules: vec![Rule {
-                value: RuleValue::FixedAmount { value: 10.00, subtotal: 50.00, quantity: 0 },
+                value: RuleValue::FixedAmount { title: "$10 Off".to_string(), value: 10.00, subtotal: 50.00, quantity: 0 },
             }],
         }
     }
@@ -204,6 +204,8 @@ pub enum DiscountRequirementType {
 pub enum RuleValue {
     FixedAmount {
         #[serde_as(as = "DisplayFromStr")]
+        title: String,
+        #[serde_as(as = "DisplayFromStr")]
         value: Decimal,
         #[serde_as(as = "DisplayFromStr")]
         subtotal: Decimal,
@@ -211,6 +213,8 @@ pub enum RuleValue {
         quantity: Int,
     },
     Percentage {
+        #[serde_as(as = "DisplayFromStr")]
+        title: String,
         #[serde_as(as = "DisplayFromStr")]
         value: Decimal,
         #[serde_as(as = "DisplayFromStr")]

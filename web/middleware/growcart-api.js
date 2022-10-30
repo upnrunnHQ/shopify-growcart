@@ -201,7 +201,7 @@ export default function applyGrowCartApiEndpoints(app) {
               },
             });
 
-            // console.log(discountItem.data.discountNode);
+            console.log(discountItem.data.discountNode);
             // console.log(data);
           } catch (error) {
             console.log(error.response.errors[0].message);

@@ -20,12 +20,12 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
         DiscountRequirementType::Subtotal =>
             for rule in config.rules {
                 match rule.value {
-                    RuleValue::FixedAmount {value, subtotal, quantity: _} =>
+                    RuleValue::FixedAmount {title,value, subtotal, quantity: _} =>
                         if input.cart.cost.subtotal_amount.amount >= subtotal {
                             let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
                             discount_value = Value::FixedAmount { amount: converted_value }
                         },
-                    RuleValue::Percentage {value, subtotal, quantity: _} =>
+                    RuleValue::Percentage {title, value, subtotal, quantity: _} =>
                         if input.cart.cost.subtotal_amount.amount >= subtotal {
                             let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
                             discount_value = Value::Percentage { value: converted_value }
@@ -44,12 +44,12 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
                 
                 for rule in config.rules {
                     match rule.value {
-                        RuleValue::FixedAmount {value, subtotal: _, quantity} =>
+                        RuleValue::FixedAmount {title, value, subtotal: _, quantity} =>
                             if _quantity >= quantity {
                                 let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
                                 discount_value = Value::FixedAmount { amount: converted_value }
                             },
-                        RuleValue::Percentage {value, subtotal: _, quantity} =>
+                        RuleValue::Percentage {title, value, subtotal: _, quantity} =>
                             if _quantity >= quantity {
                                 let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
                                 discount_value = Value::Percentage { value: converted_value }
@@ -76,7 +76,7 @@ fn build_result(value: Value, targets: Vec<Target>) -> FunctionResult {
         vec![]
     } else {
         vec![Discount {
-            message: None,
+            message: Some("Some value".to_string()),
             conditions: None,
             targets,
             value,
@@ -164,7 +164,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::FixedAmount { value: 5.00, subtotal: 20.00, quantity: 0 },
+                    value: RuleValue::FixedAmount { title: "$5 Off".to_string(), value: 5.00, subtotal: 20.00, quantity: 0 },
                 }],
             }),
             None
@@ -190,7 +190,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::FixedAmount { value: 5.00, subtotal: 20.00, quantity: 0 },
+                    value: RuleValue::FixedAmount { title: "$5 Off".to_string(), value: 5.00, subtotal: 20.00, quantity: 0 },
                 }],
             }),
             Some(2.00)
@@ -216,10 +216,10 @@ mod tests {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![
                     Rule {
-                        value: RuleValue::FixedAmount { value: 5.00, subtotal: 20.00, quantity: 0 },
+                        value: RuleValue::FixedAmount { title: "$5 Off".to_string(), value: 5.00, subtotal: 20.00, quantity: 0 },
                     },
                     Rule {
-                        value: RuleValue::FixedAmount { value: 10.00, subtotal: 50.00, quantity: 0 },
+                        value: RuleValue::FixedAmount { title: "$10 Off".to_string(), value: 10.00, subtotal: 50.00, quantity: 0 },
                     }
                 ],
             }),
@@ -246,7 +246,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Subtotal,
                 rules: vec![Rule {
-                    value: RuleValue::Percentage { value: 5.00, subtotal: 20.00, quantity: 0 },
+                    value: RuleValue::Percentage { title: "5% Off".to_string(), value: 5.00, subtotal: 20.00, quantity: 0 },
                 }],
             }),
             Some(2.00)
@@ -271,7 +271,7 @@ mod tests {
             Some(DiscountConfiguration {
                 discount_requirement_type: DiscountRequirementType::Quantity,
                 rules: vec![Rule {
-                    value: RuleValue::Percentage { value: 5.00, subtotal: 0.0, quantity: 0 },
+                    value: RuleValue::Percentage { title: "5% Off".to_string(), value: 5.00, subtotal: 0.0, quantity: 0 },
                 }],
             }),
             Some(1.00)

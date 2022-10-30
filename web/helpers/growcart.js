@@ -39,10 +39,12 @@ export async function formatSettingsResponse(req, res, rawCodeData) {
 export function prepareDiscountRules(discountRequirementType, rulesList) {
     return rulesList.map(item => {
         const discount = discountRequirementType.includes("SUBTOTAL") ? {
+            title: item.title,
             value: String(item.value),
             subtotal: String(item.amountOrQuantity),
             quantity: "0"
         } : {
+            title: item.title,
             value: String(item.value),
             subtotal: "0",
             quantity: String(item.amountOrQuantity)
