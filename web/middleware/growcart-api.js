@@ -166,7 +166,7 @@ export default function applyGrowCartApiEndpoints(app) {
             data: {
               query: UPDATE_AUTOMATIC_MUTATION,
               variables: {
-                "id": "gid://shopify/DiscountAutomaticNode/1231790506218",
+                "id": discountId,
                 "discount": {
                   metafields: [
                     {
