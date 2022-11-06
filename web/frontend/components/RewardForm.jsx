@@ -16,55 +16,36 @@ import {
     RequirementType,
 } from "@shopify/discount-app-components";
 import { useForm, useField } from "@shopify/react-form";
-import { useQueryClient } from 'react-query'
 import { v4 as uuidv4 } from 'uuid';
 import { useAppMutation, useAuthenticatedFetch } from "../hooks";
 
 const staticDiscounts = [
     {
         id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12a',
-        title: '10% Off',
+        title: '5% Off',
         type: 'percentage',
-        value: 10,
-        amountOrQuantity: 2,
+        value: "5",
+        amountOrQuantity: "5",
         hint: 'Add {{quantity}} more to get {{title}}',
         enabled: true,
     },
     {
         id: '3e6f0d87-bbd1-49f4-a0c0-7f58b665c12',
-        title: '20% Off',
-        type: 'fixed',
-        value: 20,
-        amountOrQuantity: 5,
+        title: '10% Off',
+        type: 'percentage',
+        value: 10,
+        amountOrQuantity: 10,
         hint: 'Add {{quantity}} more to get {{title}}',
         enabled: true,
     }
 ];
 
 export function RewardForm(props) {
-    const queryClient = useQueryClient();
+    const parsedDiscounts = JSON.parse(props.discounts);
     const authenticatedFetch = useAuthenticatedFetch();
-    const mutation = useAppMutation({
-        url: `/api/settings/${props.id}`,
-        fetchInit: {
-            method: "POST",
-            headers: { "Content-Type": "text/html" }
-        },
-        reactMutationOptions: {
-            onSuccess: (data) => {
-                console.log(data);
-                // queryClient.invalidateQueries('/api/settings');
-            },
-            onError: (error, variables, context) => {
-                console.log(error)
-            },
-        }
-    });
-
     const [settings, setSettings] = useState({
         ...props,
-        discounts: JSON.parse(props.discounts),
-        // discounts: staticDiscounts,
+        discounts: parsedDiscounts && parsedDiscounts.length ? parsedDiscounts : staticDiscounts,
     });
     const {
         fields: {
@@ -92,19 +73,6 @@ export function RewardForm(props) {
                         ...fieldValues
                     }),
                 });
-
-    
-
-                console.log(await response.json());
-                // await fetch(`/api/settings/${props.id}`, {
-                //     method: "POST"
-                // })
-                //     .then((response) => response.json())
-                //     .then((data) => console.log(data));
-                // await mutation.mutateAsync({
-                //     ...props,
-                //     ...fieldValues
-                // })
                 makeClean();
             } catch (remoteErrors) {
                 return { status: 'fail', errors: remoteErrors };
