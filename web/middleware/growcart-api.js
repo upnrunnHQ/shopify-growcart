@@ -132,6 +132,8 @@ export default function applyGrowCartApiEndpoints(app) {
 
     if (settings) {
       try {
+        let discountId = "";
+        let configurationFieldId = "";
         const parsedSettingsBody = await parseSettingsBody(req);
         const discountRequirementType = parsedSettingsBody.minimumRequiremenType;
         const discounts = JSON.parse(parsedSettingsBody.discounts);
@@ -143,11 +145,50 @@ export default function applyGrowCartApiEndpoints(app) {
           app.get("use-online-tokens")
         );
 
-        if (!settings.discountId || ("" === settings.discountId)) {
+        if (settings.discountId && "" !== settings.discountId) {
+          const discountItem = await runDiscountMutation(
+            {
+              id: settings.discountId
+            },
+            GET_DISCOUNT_QUERY,
+            session
+          );
+
+          if (discountItem.data.discountNode) {
+            discountId = settings.discountId;
+            configurationFieldId = discountItem.data.discountNode.configurationField.id;
+          }
+        }
+
+        if (discountId) {
+          const client = new Shopify.Clients.Graphql(session?.shop, session?.accessToken);
+          const data = await client.query({
+            data: {
+              query: UPDATE_AUTOMATIC_MUTATION,
+              variables: {
+                "id": "gid://shopify/DiscountAutomaticNode/1231790506218",
+                "discount": {
+                  metafields: [
+                    {
+                      id: configurationFieldId,
+                      namespace: "discounts-plus",
+                      key: "volume-config",
+                      type: "json",
+                      value: JSON.stringify({
+                        discountRequirementType: discountRequirementType[0],
+                        rules: preparedDiscountRules
+                      }),
+                    },
+                  ],
+                },
+              }
+            },
+          });
+        } else {
           const mutation = await runDiscountMutation({
             discount: {
               functionId: "01GETZ4P8B7GWRMVSA64RM4MHZ",
-              title: "Test",
+              title: "Volume Discount",
               startsAt: new Date(),
               metafields: [
                 {
@@ -165,59 +206,19 @@ export default function applyGrowCartApiEndpoints(app) {
             CREATE_AUTOMATIC_MUTATION,
             session
           );
-          // console.log(mutation.data.discountCreate.automaticAppDiscount.discountId);
-          // console.log(mutation.data.discountCreate.userErrors);
-        } else {
-          const discountItem = await runDiscountMutation(
-            {
-              id: "gid://shopify/DiscountAutomaticNode/1231790506218"
-            },
-            GET_DISCOUNT_QUERY,
-            session
-          );
 
-          try {
-            const client = new Shopify.Clients.Graphql(session?.shop, session?.accessToken);
-            const data = await client.query({
-              data: {
-                query: UPDATE_AUTOMATIC_MUTATION,
-                variables: {
-                  "id": "gid://shopify/DiscountAutomaticNode/1231790506218",
-                  "discount": {
-                    metafields: [
-                      {
-                        id: discountItem.data.discountNode.configurationField.id,
-                        namespace: "discounts-plus",
-                        key: "volume-config",
-                        type: "json",
-                        value: JSON.stringify({
-                          discountRequirementType: discountRequirementType[0],
-                          rules: preparedDiscountRules
-                        }),
-                      },
-                    ],
-                  },
-                }
-              },
-            });
-
-            console.log(discountItem.data.discountNode);
-            // console.log(data);
-          } catch (error) {
-            console.log(error.response.errors[0].message);
-          }
+          discountId = mutation.data.discountCreate.automaticAppDiscount.discountId;
         }
 
-        // await GrowCartDB.update(req.params.id, {
-        //   ...parsedSettingsBody,
-        //   discountId: "gid://shopify/DiscountAutomaticNode/1231761146090",
-        //   // discountId: mutation.data.discountCreate.automaticAppDiscount.discountId,
-        // });
-        // const response = await formatSettingsResponse(req, res, [
-        //   await GrowCartDB.readById(req.params.id),
-        // ]);
+        await GrowCartDB.update(req.params.id, {
+          ...parsedSettingsBody,
+          discountId,
+        });
+        const response = await formatSettingsResponse(req, res, [
+          await GrowCartDB.readById(req.params.id),
+        ]);
 
-        res.status(200).send([]);
+        res.status(200).send(response);
       } catch (error) {
         res.status(500).send(error.message);
       }
