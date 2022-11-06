@@ -49,9 +49,6 @@ export function DiscountsProvider({ children }) {
         }
     }
 
-    // console.log(data);
-    console.log(discountsContextValue);
-
     return (
         <DiscountsContext.Provider value={discountsContextValue}>
             {children}
