@@ -15,6 +15,7 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
     let config = input.configuration();
 
     let mut discount_value: Value = Value::FixedAmount { amount: 0.0 };
+    let mut discount_title: String = "".to_string();
 
     match config.discount_requirement_type {
         DiscountRequirementType::Subtotal =>
@@ -23,12 +24,14 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
                     RuleValue::FixedAmount {title,value, subtotal, quantity: _} =>
                         if input.cart.cost.subtotal_amount.amount >= subtotal {
                             let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
-                            discount_value = Value::FixedAmount { amount: converted_value }
+                            discount_value = Value::FixedAmount { amount: converted_value };
+                            discount_title =  title.to_string();
                         },
                     RuleValue::Percentage {title, value, subtotal, quantity: _} =>
                         if input.cart.cost.subtotal_amount.amount >= subtotal {
                             let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
-                            discount_value = Value::Percentage { value: converted_value }
+                            discount_value = Value::Percentage { value: converted_value };
+                            discount_title =  title.to_string();
                         }
                 }
                 
@@ -47,12 +50,14 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
                         RuleValue::FixedAmount {title, value, subtotal: _, quantity} =>
                             if _quantity >= quantity {
                                 let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
-                                discount_value = Value::FixedAmount { amount: converted_value }
+                                discount_value = Value::FixedAmount { amount: converted_value };
+                                discount_title = title.to_string();
                             },
                         RuleValue::Percentage {title, value, subtotal: _, quantity} =>
                             if _quantity >= quantity {
                                 let converted_value = convert_to_cart_currency(value, input.presentment_currency_rate);
-                                discount_value = Value::Percentage { value: converted_value }
+                                discount_value = Value::Percentage { value: converted_value };
+                                discount_title = title.to_string();
                             }
                     }
                 }
@@ -64,19 +69,19 @@ fn function(input: input::Input) -> Result<FunctionResult, Box<dyn std::error::E
         excluded_variant_ids: vec![],
     }];
 
-    Ok(build_result(discount_value, targets))
+    Ok(build_result(discount_title, discount_value, targets))
 }
 
 fn convert_to_cart_currency(value: f64, presentment_currency_rate: f64) -> f64 {
     value * presentment_currency_rate
 }
 
-fn build_result(value: Value, targets: Vec<Target>) -> FunctionResult {
+fn build_result(discount_title: String, value: Value, targets: Vec<Target>) -> FunctionResult {
     let discounts = if targets.is_empty() {
         vec![]
     } else {
         vec![Discount {
-            message: Some("Some value".to_string()),
+            message: Some(discount_title),
             conditions: None,
             targets,
             value,
@@ -149,6 +154,7 @@ mod tests {
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
+                    "message": "$10 Off",
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
                     "value": { "fixedAmount": { "amount": "10" } },
                 }
@@ -174,6 +180,7 @@ mod tests {
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
+                    "message": "$5 Off",
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
                     "value": { "fixedAmount": { "amount": "5" } },
                 }
@@ -200,6 +207,7 @@ mod tests {
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
+                    "message": "$5 Off",
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
                     "value": { "fixedAmount": { "amount": "10" } },
                 }
@@ -230,6 +238,7 @@ mod tests {
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
+                    "message": "$10 Off",
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
                     "value": { "fixedAmount": { "amount": "10" } },
                 }
@@ -256,6 +265,7 @@ mod tests {
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
+                    "message": "5% Off",
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
                     "value": { "percentage": { "value": "10" } },
                 }
@@ -281,6 +291,7 @@ mod tests {
         let expected_handle_result = serde_json::json!({
             "discounts": [
                 {
+                    "message": "5% Off",
                     "targets": [{ "orderSubtotal": { "excludedVariantIds": [] } }],
                     "value": { "percentage": { "value": "5" } },
                 }
