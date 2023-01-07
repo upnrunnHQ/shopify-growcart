@@ -55,6 +55,7 @@ export function CartProvider({ children }) {
         
         document.body.addEventListener('added_to_cart', () => {
             queryClient.invalidateQueries(['cartContents']);
+            setDisplayCart(true);
         });
     }, [])
 
