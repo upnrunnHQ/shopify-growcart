@@ -8,3 +8,4 @@ export { CartLineItem } from './CartLineItem';
 export { OrderSummary } from './OrderSummary';
 export { CartCheckoutActions } from './CartCheckoutActions';
 export { CartLineQuantityAdjustButton } from './CartLineQuantityAdjustButton';
+export { Recommendations } from './Recommendations';

@@ -9,7 +9,8 @@ import {
     CartLineItem,
     CartEmpty,
     OrderSummary,
-    CartCheckoutActions
+    CartCheckoutActions,
+    Recommendations
 } from 'components';
 import brandLogo from './../../img/brand-logo.png';
 
@@ -38,6 +39,7 @@ export function CartDetails() {
                         );
                     })}
                 </ul>
+                {!!cart.items.length && <Recommendations />}
             </section>
             <section className='CartDetails__summary'>
                 <OrderSummary />

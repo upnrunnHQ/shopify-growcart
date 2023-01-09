@@ -17,6 +17,7 @@
 @import "elements";
 @import "growcarthq-toggler";
 @import "rewards";
+@import "recommendations";
 
 .offcanvas {
     --bs-offcanvas-width: 500px;
@@ -71,7 +72,7 @@ div.offcanvas-backdrop {
 
 .CartLineItem {
     display: flex;
-    gap: 1rem;
+    gap: 16px;
 
     &__image {
         flex-shrink: 1;
