@@ -1,8 +1,5 @@
 import React, { useCallback } from 'react';
-import {
-    useCartLine,
-} from '@shopify/hydrogen';
-import { useCart } from 'hooks';
+import { useCart, useCartLine } from 'hooks';
 
 export function CartLineQuantityAdjustButton(props) {
     const { isLoading, lineUpdate } = useCart();

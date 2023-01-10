@@ -2,6 +2,7 @@ export { CartProvider } from './CartProvider';
 export { DiscountsProvider } from './DiscountsProvider';
 export { Cart } from './Cart';
 export { CartDetails } from './CartDetails';
+export { CartLineProvider } from './CartLineProvider';
 export { Rewards } from './Rewards';
 export { CartEmpty } from './CartEmpty';
 export { CartLineItem } from './CartLineItem';

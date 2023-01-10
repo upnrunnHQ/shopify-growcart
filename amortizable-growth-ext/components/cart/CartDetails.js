@@ -1,11 +1,9 @@
 import React, { useRef } from 'react';
 import { useScroll } from 'react-use';
-import {
-    CartLineProvider,
-} from '@shopify/hydrogen';
 import { useCart } from 'hooks';
 import {
     Rewards,
+    CartLineProvider,
     CartLineItem,
     CartEmpty,
     OrderSummary,

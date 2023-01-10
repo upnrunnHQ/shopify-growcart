@@ -1,14 +1,11 @@
 import React from 'react';
-import {
-    useCartLine,
-    CartLineQuantity,
-} from '@shopify/hydrogen';
-import { useCart } from 'hooks';
+import { useCart, useCartLine } from 'hooks';
 import {
     Heading,
     IconRemove,
     Text,
     Money,
+    CartLineQuantity,
     CartLineQuantityAdjustButton
 } from 'components';
 
